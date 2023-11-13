@@ -132,7 +132,7 @@ public class Bi_helper {
 		try {
 			Robot robot = new Robot();
 
-			String documentsPath = System.getProperty("user.home") + "/Documents/Automatizacion BEL Web/ "
+			String documentsPath = System.getProperty("user.home") + "/Documents/Automatizacion BEL Web/"
 					+ tipoTransaccion + " " + Hoy(1);
 
 			if (completada) {
