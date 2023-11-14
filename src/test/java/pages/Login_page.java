@@ -2,7 +2,6 @@ package pages;
 
 import org.openqa.selenium.By;
 
-import config.Preferencias;
 import helpers.Bi_helper;
 
 public class Login_page extends General_page {
@@ -21,7 +20,6 @@ public class Login_page extends General_page {
 
 	public Login_page() throws InterruptedException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public void ingresarCodigo(String texto) {

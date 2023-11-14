@@ -18,17 +18,10 @@ import javax.json.JsonReader;
 
 import org.openqa.selenium.WebDriver;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import config.Preferencias;
 
 public class Bi_helper {
 	static Preferencias preferencias = Preferencias.PREFERENCIAS();
-
-	// private static final String DATA_JSON =
-	// preferencias.obtenerAtributo("rutaJson");
-	// obtenerDato
 
 	public Bi_helper() {
 		// super();
@@ -44,8 +37,6 @@ public class Bi_helper {
 	 * @throws InterruptedException Posibles errores al buscar el atributo u objeto
 	 */
 	public static String obtenerDato(String objeto, String atributo, String ruta) throws InterruptedException {
-		// String ruta = "src/main/resources/fls/elementos.json";
-
 		File archivo = new File(ruta);
 
 		String retorno = "";
@@ -69,14 +60,6 @@ public class Bi_helper {
 				} else {
 					throw new InterruptedException("El objeto " + objeto + " no existe en el JSON.");
 				}
-
-				/*
-				 * ObjectMapper tmp = new ObjectMapper();
-				 * 
-				 * JsonNode json = tmp.readTree(archivo);
-				 * 
-				 * return json.path(atributo).asText();
-				 */
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -86,22 +69,6 @@ public class Bi_helper {
 
 		return retorno;
 	}
-
-	/**
-	 * Devuelve el valor de un atributo dentro de un archivo .json
-	 * 
-	 * @param objeto   Nombre del objeto al que se desea acceder
-	 * @param atributo Nombre del atributo donde se obtendra el valor
-	 * @return String, Valor del atributo encontrado
-	 * @throws InterruptedException Posibles errores al buscar el atributo u objeto
-	 */
-	/*
-	 * public static String obtenerDato(String objeto, String atributo) throws
-	 * InterruptedException { return leerJson(objeto, atributo, DATA_JSON); }
-	 * 
-	 * public static String obtenerConfig(String objeto, String atributo) throws
-	 * InterruptedException { return leerJson(objeto, atributo, CONFIG_JSON); }
-	 */
 
 	/**
 	 * Devuelve la fecha actual, el formato depende del parametro tipo
@@ -212,8 +179,4 @@ public class Bi_helper {
 		}
 		return valor;
 	}
-
-	/*
-	 * public String obtenerAmbiente(String ambiente) { obtenerConfig() }
-	 */
 }

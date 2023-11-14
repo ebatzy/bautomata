@@ -48,7 +48,6 @@ public class Login_model {
 			loginPage.navegar(PAGINA_WEB);
 			return true;
 		} catch (Exception e) {
-			// TODO: handle exception
 			return false;
 		}
 	}

@@ -34,7 +34,7 @@ public class Transferencia_propia_model {
 	public void transferencias(ExtentTest test, String cuentaDebitar, String cuentaAcreditar, String monto, int linea) {
 
 		try {
-			String errorTransferencia = "", montoCredito = "", tipoCambio = "", tipoCuentaDebitar = "",
+			String errorTransferencia = "", tipoCambio = "", tipoCuentaDebitar = "",
 					tipoCuentaAcreditar = "";
 
 			boolean monedaCruzada = false;
@@ -48,9 +48,8 @@ public class Transferencia_propia_model {
 
 			tipoCambio = validarMonedaCruzada(test, monto);
 
-			if (tipoCambio == "N/A")
-				montoCredito = monto;
-			else
+			if (tipoCambio == "N/A") {
+			} else
 				monedaCruzada = true;
 
 			typeComentario(test);
@@ -128,7 +127,6 @@ public class Transferencia_propia_model {
 		return null;
 	}
 
-	// TODO
 	public Boolean typeComentario(ExtentTest test) throws IOException, InterruptedException {
 		String comentario = Bi_helper.obtenerDato("comentarioTransferencias", "comentario", DATOS_CONFIG);
 		try {

@@ -28,18 +28,15 @@ public class General_page {
 
 	public General_page() throws InterruptedException {
 		super();
-		// General_page genPage = General_page.genPage();
 	}
 
 	/**
-	 * Recibe como parametro un valor entero, los cuales son: 1. Edge 2. Chrome 3.
-	 * Firefox
+	 * Inicia el driver según la variable NAVEGADOR_TIPO
 	 * 
-	 * @param tipo
-	 * @return driver
+	 * @return driver WebDriver
 	 * @throws InterruptedException
 	 */
-	public static WebDriver iniciarNavegador() throws InterruptedException {
+	public WebDriver iniciarNavegador() throws InterruptedException {
 
 		if (NAVEGADOR_TIPO == "1") {
 			ChromeOptions opciones = new ChromeOptions();
@@ -69,10 +66,19 @@ public class General_page {
 		return driver;
 	}
 
+	/**
+	 * Retorna el driver previamente instanciado
+	 * 
+	 * @return driver WebDriver
+	 */
 	public static WebDriver obtenerDriver() {
 		return driver;
 	}
 
+	/**
+	 * Termina el uso del driver
+	 * 
+	 */
 	public static void cerrarNavegador() {
 		driver.quit();
 	}

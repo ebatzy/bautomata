@@ -49,7 +49,6 @@ public class Transferencia_propia_page extends General_page {
 
 	public Transferencia_propia_page() throws InterruptedException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public void clicktransferenciaMonetariasYAhorros() {

@@ -22,7 +22,6 @@ public class Principal_page extends General_page {
 
 	public Principal_page() throws InterruptedException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public void clickMenuTransferencias() {

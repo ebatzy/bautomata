@@ -207,7 +207,6 @@ public class Principal {
 							selectQA(j + 1);
 						} catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
 								| IllegalAccessException | InterruptedException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					});

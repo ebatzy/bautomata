@@ -4,20 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Preferencias {
-
-	/*
-	 * private String home = System.getProperty("user.home"); private String
-	 * rutaExcel = home + "\\Documents\\Automatizacion BEL Web\\Datos.xlsx"; //
-	 * private static String paginaWeb = ""; private String paginaWeb =
-	 * "https://www.bienlinea.bi.com.gt"; private String bitacora = home +
-	 * "\\Documents\\Automatizacion BEL Web\\Operacional.xlsx"; private String
-	 * rutaJson = home +
-	 * "\\Documents\\Automatizacion BEL Web\\Resourses\\ElementsPage.json"; private
-	 * String rutaJsonConfig = home +
-	 * "\\Documents\\Automatizacion BEL Web\\Resourses\\Config.json"; private String
-	 * rutaReporte = home + "\\Documentos\\Automatizacion BEL Web\\Reporte.html";
-	 */
-
 	private Map<String, Object> atributos = new HashMap<>();
 
 	private static Preferencias PREFERENCIAS;
@@ -46,15 +32,6 @@ public class Preferencias {
 		return PREFERENCIAS;
 	}
 
-	/*
-	 * 
-	 * 
-	 * public static Preferencias PREFERENCIAS() { if (PREFERENCIAS == null) {
-	 * PREFERENCIAS = new Preferencias(); }
-	 * 
-	 * return PREFERENCIAS; }
-	 */
-
 	/**
 	 * 
 	 * @param nombre Nombre del atributo
@@ -65,19 +42,10 @@ public class Preferencias {
 	 * @throws IllegalAccessException
 	 */
 	public String obtenerAtributo(String nombre) {
-		/*
-		 * Class<?> clase = this.getClass(); Field campo =
-		 * clase.getDeclaredField(nombre);
-		 * 
-		 * campo.setAccessible(true);
-		 * 
-		 * return campo.get(this);
-		 */
-		// return atributos.get(nombre);
 		if (atributos.containsKey(nombre)) {
 			return String.valueOf(atributos.get(nombre));
 		} else {
-			throw new IllegalArgumentException("Nombre de atributo no válido: " + nombre);
+			throw new IllegalArgumentException("Nombre de atributo no vï¿½lido: " + nombre);
 		}
 	}
 
@@ -91,14 +59,6 @@ public class Preferencias {
 	 * @throws IllegalAccessException
 	 */
 	public void valorAtributo(String nombre, Object valor) {
-		/*
-		 * Class<?> clase = this.getClass(); Field campo =
-		 * clase.getDeclaredField(nombre);
-		 * 
-		 * campo.setAccessible(true);
-		 * 
-		 * campo.set(campo, valor);
-		 */
 		atributos.put(nombre, valor);
 	}
 }
