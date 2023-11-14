@@ -33,6 +33,7 @@ public class Bi_helper {
 	 * 
 	 * @param objeto   Nombre del objeto al que se desea acceder
 	 * @param atributo Nombre del atributo donde se obtendra el valor
+	 * @param ruta     Ruta del archivo .json
 	 * @return String, Valor del atributo encontrado
 	 * @throws InterruptedException Posibles errores al buscar el atributo u objeto
 	 */
@@ -80,14 +81,14 @@ public class Bi_helper {
 		SimpleDateFormat formato = null;
 
 		switch (tipo) {
-		case 1:
-			formato = new SimpleDateFormat("dd-MM-yy");
-			break;
-		case 2:
-			formato = new SimpleDateFormat("dd-MM-yy HH-mm-ss");
-			break;
-		default:
-			break;
+			case 1:
+				formato = new SimpleDateFormat("dd-MM-yy");
+				break;
+			case 2:
+				formato = new SimpleDateFormat("dd-MM-yy HH-mm-ss");
+				break;
+			default:
+				break;
 		}
 
 		Date fecha = new Date();
@@ -132,48 +133,48 @@ public class Bi_helper {
 				valor = "Monetaria Q";
 		} else {
 			switch (cadena.substring(0, 1)) {
-			case "0":
-				valor = "Ahorro Corriente";
-				break;
-			case "3":
-				if (cadena.substring(0, 3).equals("334"))
-					valor = "Ahorro Seguro Dolar";
-				else if (cadena.substring(0, 2).equals("33"))
-					valor = "Ahorro Dolar";
-				else if (cadena.substring(0, 2).equals("34"))
-					valor = "Ahorro Dolar";
-				else if (cadena.substring(0, 2).equals("35"))
-					valor = "Ahorro Super Cuenta";
-				else if (cadena.substring(0, 2).equals("38"))
-					valor = "Ahorro Cuenta Chica";
-				else
-					valor = "Ahorro";
-				break;
-			case "4":
-				if (cadena.substring(0, 3).equals("411"))
-					valor = "Ahorro Seguro Q";
-				else if (cadena.substring(0, 2).equals("41"))
-					valor = "Ahorro con Sorteo";
-				else if (cadena.substring(0, 3).equals("413"))
+				case "0":
+					valor = "Ahorro Corriente";
+					break;
+				case "3":
+					if (cadena.substring(0, 3).equals("334"))
+						valor = "Ahorro Seguro Dolar";
+					else if (cadena.substring(0, 2).equals("33"))
+						valor = "Ahorro Dolar";
+					else if (cadena.substring(0, 2).equals("34"))
+						valor = "Ahorro Dolar";
+					else if (cadena.substring(0, 2).equals("35"))
+						valor = "Ahorro Super Cuenta";
+					else if (cadena.substring(0, 2).equals("38"))
+						valor = "Ahorro Cuenta Chica";
+					else
+						valor = "Ahorro";
+					break;
+				case "4":
+					if (cadena.substring(0, 3).equals("411"))
+						valor = "Ahorro Seguro Q";
+					else if (cadena.substring(0, 2).equals("41"))
+						valor = "Ahorro con Sorteo";
+					else if (cadena.substring(0, 3).equals("413"))
+						valor = "Ahorro SOS";
+					else
+						valor = "Ahorro";
+					break;
+				case "5":
 					valor = "Ahorro SOS";
-				else
+					break;
+				case "7":
+					valor = "Ahorro 5 Estrellas";
+					break;
+				case "8":
+					valor = "Ahorro 5 Estrellas";
+					break;
+				case "9":
+					valor = "Ahorro 5 Estrellas";
+					break;
+				default:
 					valor = "Ahorro";
-				break;
-			case "5":
-				valor = "Ahorro SOS";
-				break;
-			case "7":
-				valor = "Ahorro 5 Estrellas";
-				break;
-			case "8":
-				valor = "Ahorro 5 Estrellas";
-				break;
-			case "9":
-				valor = "Ahorro 5 Estrellas";
-				break;
-			default:
-				valor = "Ahorro";
-				break;
+					break;
 			}
 			return valor;
 		}
