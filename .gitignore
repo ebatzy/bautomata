@@ -2,5 +2,6 @@
 .settings
 .vscode
 .vs
+.classpath
 target
 test-output
