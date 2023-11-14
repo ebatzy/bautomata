@@ -1,1 +1,6 @@
-target/
+#Editor directories and files
+.vs
+.vscode
+.settings
+target
+test-output
