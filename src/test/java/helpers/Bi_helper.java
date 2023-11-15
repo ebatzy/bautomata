@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
@@ -18,10 +19,12 @@ import javax.json.JsonReader;
 
 import org.openqa.selenium.WebDriver;
 
+import config.Mensajes;
 import config.Preferencias;
 
 public class Bi_helper {
 	static Preferencias preferencias = Preferencias.PREFERENCIAS();
+	static Mensajes mensajes = Mensajes.MENSAJES();
 
 	public Bi_helper() {
 		// super();
@@ -59,12 +62,14 @@ public class Bi_helper {
 						throw new InterruptedException("No existe el atributo " + atributo);
 					}
 				} else {
-					throw new InterruptedException("El objeto " + objeto + " no existe en el JSON.");
+					setErrores(2, Map.of("{objeto}", objeto, "{ruta}", ruta));
+					throw new InterruptedException(mensajes.getMensaje());
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
+			setErrores(3, Map.of("{ruta}", ruta));
 			throw new InterruptedException("El archivo " + ruta + " no existe");
 		}
 
@@ -179,5 +184,25 @@ public class Bi_helper {
 			return valor;
 		}
 		return valor;
+	}
+
+	public static void setErrores(Integer codigo, Map<String, String> datos) {
+		String temp = "";
+
+		if (mensajes.errores.containsKey(codigo)) {
+            if (datos != null && !datos.isEmpty()) {
+				temp = mensajes.errores.get(codigo);
+                
+				for (Map.Entry<String, String> entry : datos.entrySet()) {
+                    temp = temp.replace(entry.getKey(), entry.getValue());
+                }
+            } else {
+                temp = codigo.toString() + " " + mensajes.errores.get(codigo);
+            }
+        } else {
+            temp = "-1 Error desconocido";
+        }
+
+        mensajes.agregarMensaje(temp);
 	}
 }
