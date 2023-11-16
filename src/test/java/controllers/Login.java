@@ -9,7 +9,11 @@ import org.testng.xml.XmlClass;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
+import config.Mensajes;
+
 public class Login {
+
+	static Mensajes mensajes = new Mensajes();
 
 	public static void main(String[] args) {
 		TestNG testng = new TestNG();
@@ -22,5 +26,6 @@ public class Login {
 		test.setXmlClasses(classes);
 		testng.setXmlSuites(Arrays.asList(new XmlSuite[] { suite }));
 		testng.run();
+		mensajes.agregarMensaje("Test ejecutado exitosamente");
 	}
 }

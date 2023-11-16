@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,12 +29,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import config.Mensajes;
+import config.MensajesObserver;
 import config.Preferencias;
 import controllers.Login;
 import controllers.transferencia.Transferencia_propia;
 import helpers.Bi_helper;
 
-public class Principal {
+public class Principal implements MensajesObserver {
 	static Preferencias preferencias = Preferencias.PREFERENCIAS();
 	private static final String AMBIENTE_JSON = preferencias.obtenerAtributo("rutaJsonAmbiente");
 
@@ -44,7 +47,7 @@ public class Principal {
 	static ImageIcon iconoFallo = new ImageIcon("src/test/resources/img/Fallo.png");
 	static ImageIcon iconoCorrecto = new ImageIcon("src/test/resources/img/Correcto.png");
 
-	static String[] arregloResultado;
+	static ArrayList<String> arregloResultado = new ArrayList<String>();
 	static ImageIcon iconoResultado;
 	static Color colorResultado;
 	static Boolean mostrarResultado = false;
@@ -52,7 +55,7 @@ public class Principal {
 	private static PropertyChangeSupport escucha;
 
 	public Principal() {
-
+		Mensajes.addObserver(this);
 	}
 
 	public static void main(String[] args) {
@@ -77,6 +80,11 @@ public class Principal {
 			tituloNivel.setFont(new Font("Arial", Font.BOLD, 15));
 			panelNivel.add(tituloNivel, BorderLayout.NORTH);
 
+			JPanel botonesNiveles = new JPanel();
+			botonesNiveles.setLayout(new BoxLayout(botonesNiveles, BoxLayout.Y_AXIS));
+			botonesNiveles.setBackground(new Color(199, 238, 255));
+			panelNivel.add(botonesNiveles, BorderLayout.CENTER);
+
 			JPanel panelBrowser = new JPanel(new BorderLayout());
 			panelBrowser.setBackground(colorFondo);
 			panelBrowser.setPreferredSize(new Dimension(150, 270));
@@ -90,36 +98,30 @@ public class Principal {
 			botonesBrowsers.setBackground(new Color(199, 238, 255));
 			panelBrowser.add(botonesBrowsers, BorderLayout.CENTER);
 
-			JPanel botonesNiveles = new JPanel();
-			botonesNiveles.setLayout(new BoxLayout(botonesNiveles, BoxLayout.Y_AXIS));
-			botonesNiveles.setBackground(new Color(199, 238, 255));
-			panelNivel.add(botonesNiveles, BorderLayout.CENTER);
-
-			JPanel panelIzquierdo = new JPanel(new BorderLayout());
-			panelIzquierdo.setBackground(new Color(158, 218, 255));
-			panelIzquierdo.setPreferredSize(new Dimension(150, 270));
+			JPanel panelAmbientes = new JPanel(new BorderLayout());
+			panelAmbientes.setBackground(new Color(158, 218, 255));
+			panelAmbientes.setPreferredSize(new Dimension(150, 270));
 			JLabel tituloIzquierdo = new JLabel("QA's", SwingConstants.CENTER);
 			tituloIzquierdo.setPreferredSize(new Dimension(300, 25));
 			tituloIzquierdo.setFont(new Font("Arial", Font.BOLD, 15));
-			panelIzquierdo.add(tituloIzquierdo, BorderLayout.NORTH);
+			panelAmbientes.add(tituloIzquierdo, BorderLayout.NORTH);
 
-			JPanel botonesIzquierdos = new JPanel();
-			botonesIzquierdos.setLayout(new BoxLayout(botonesIzquierdos, BoxLayout.Y_AXIS));
-			botonesIzquierdos.setBackground(new Color(199, 238, 255));
-			panelIzquierdo.add(botonesIzquierdos, BorderLayout.CENTER);
+			JPanel botonesAmbientes = new JPanel();
+			botonesAmbientes.setLayout(new BoxLayout(botonesAmbientes, BoxLayout.Y_AXIS));
+			botonesAmbientes.setBackground(new Color(199, 238, 255));
+			panelAmbientes.add(botonesAmbientes, BorderLayout.CENTER);
 
-			JPanel panelDerecho = new JPanel(new BorderLayout());
-			panelDerecho.setBackground(new Color(158, 218, 255));
-			panelDerecho.setPreferredSize(new Dimension(200, 270));
+			JPanel panelTests = new JPanel(new BorderLayout());
+			panelTests.setBackground(new Color(158, 218, 255));
+			panelTests.setPreferredSize(new Dimension(200, 270));
 			JLabel tituloDerecho = new JLabel("Tests", SwingConstants.CENTER);
 			tituloDerecho.setPreferredSize(new Dimension(300, 25));
 			tituloDerecho.setFont(new Font("Arial", Font.BOLD, 15));
-			panelDerecho.add(tituloDerecho, BorderLayout.NORTH);
+			panelTests.add(tituloDerecho, BorderLayout.NORTH);
 
-			JPanel botonesDerechos = new JPanel();
-			botonesDerechos.setLayout(new BoxLayout(botonesDerechos, BoxLayout.Y_AXIS));
-			botonesDerechos.setBackground(new Color(199, 238, 255));
-			panelDerecho.add(botonesDerechos, BorderLayout.CENTER);
+			JPanel botonesTests = new JPanel();
+			botonesTests.setLayout(new BoxLayout(botonesTests, BoxLayout.Y_AXIS));
+			botonesTests.setBackground(new Color(199, 238, 255));
 
 			JButton botonNivel1 = new JButton("Nivel 1");
 			botonNivel1.setEnabled(true);
@@ -181,8 +183,6 @@ public class Principal {
 			botonNivel3.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					String[] arreglo = {  };
-					resultado(arreglo);
 					for (Component btnsLevels : botonesNiveles.getComponents()) {
 						if (btnsLevels instanceof JButton) {
 							btnsLevels.setEnabled(false);
@@ -195,22 +195,7 @@ public class Principal {
 					}
 				}
 			});
-
-			JButton boton1 = new JButton("Login");
-			boton1.setEnabled(false);
-			boton1.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesDerechos.add(boton1);
-			boton1.addActionListener(e -> {
-				Login.main(args);
-			});
-
-			JButton boton2 = new JButton("Transferencias Propias");
-			boton2.setEnabled(false);
-			boton2.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesDerechos.add(boton2);
-			boton2.addActionListener(e -> {
-				Transferencia_propia.main(args);
-			});
+			panelTests.add(botonesTests, BorderLayout.CENTER);
 
 			/*
 			 * JButton boton3 = new JButton("Transferencias Terceros");
@@ -219,7 +204,7 @@ public class Principal {
 			 * TransferenciasTercerosExec.main(args); });
 			 */
 
-			JButton[] botonesIzquierdosArray = new JButton[9];
+			JButton[] botonesAmbientesArray = new JButton[9];
 			for (int i = 0; i < 9; i++) {
 				final int j = i;
 
@@ -229,22 +214,33 @@ public class Principal {
 					boton.setAlignmentX(Component.CENTER_ALIGNMENT);
 					boton.addActionListener(e -> {
 						try {
+							boton.setEnabled(false);
+							boton.setBackground(colorFondo);
+							for (JButton botonIzquierdo : botonesAmbientesArray) {
+								if (botonIzquierdo != boton) {
+									botonIzquierdo.setEnabled(false);
+								}
+							}
+							for (Component comp : botonesTests.getComponents()) {
+								if (comp instanceof JButton) {
+									comp.setEnabled(true);
+								}
+							}
 							selectQA(j + 1);
 						} catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
 								| IllegalAccessException | InterruptedException e1) {
 							e1.printStackTrace();
 						}
 					});
-
 					boton.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							for (JButton botonIzquierdo : botonesIzquierdosArray) {
+							for (JButton botonIzquierdo : botonesAmbientesArray) {
 								if (botonIzquierdo != boton) {
 									botonIzquierdo.setEnabled(false);
 								}
 							}
-							for (Component comp : botonesDerechos.getComponents()) {
+							for (Component comp : botonesTests.getComponents()) {
 								if (comp instanceof JButton) {
 									comp.setEnabled(true);
 								}
@@ -252,8 +248,8 @@ public class Principal {
 						}
 					});
 
-					botonesIzquierdosArray[i] = boton;
-					botonesIzquierdos.add(boton);
+					botonesAmbientesArray[i] = boton;
+					botonesAmbientes.add(boton);
 
 				} else {
 					JButton boton = new JButton("Produccion");
@@ -261,30 +257,28 @@ public class Principal {
 					boton.setAlignmentX(Component.CENTER_ALIGNMENT);
 					boton.addActionListener(e -> {
 						try {
+							boton.setEnabled(false);
+							boton.setBackground(colorFondo);
+							for (JButton botonIzquierdo : botonesAmbientesArray) {
+								if (botonIzquierdo != boton) {
+									botonIzquierdo.setEnabled(false);
+								}
+							}
+							for (Component comp : botonesTests.getComponents()) {
+								if (comp instanceof JButton) {
+									comp.setEnabled(true);
+								}
+							}
 							selectQA(j + 1);
 						} catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
 								| IllegalAccessException | InterruptedException e1) {
 							e1.printStackTrace();
 						}
+
 					});
 
-					boton.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							for (JButton botonIzquierdo : botonesIzquierdosArray) {
-								if (botonIzquierdo != boton) {
-									botonIzquierdo.setEnabled(false);
-								}
-							}
-							for (Component comp : botonesDerechos.getComponents()) {
-								if (comp instanceof JButton) {
-									comp.setEnabled(true);
-								}
-							}
-						}
-					});
-					botonesIzquierdosArray[i] = boton;
-					botonesIzquierdos.add(boton);
+					botonesAmbientesArray[i] = boton;
+					botonesAmbientes.add(boton);
 				}
 			}
 
@@ -305,7 +299,7 @@ public class Principal {
 							btnsBrowsers.setEnabled(false);
 						}
 					}
-					for (JButton btnsEnvironment : botonesIzquierdosArray) {
+					for (JButton btnsEnvironment : botonesAmbientesArray) {
 						if (btnsEnvironment instanceof JButton) {
 							btnsEnvironment.setEnabled(true);
 						}
@@ -330,7 +324,7 @@ public class Principal {
 							btnsBrowsers.setEnabled(false);
 						}
 					}
-					for (JButton btnsEnvironment : botonesIzquierdosArray) {
+					for (JButton btnsEnvironment : botonesAmbientesArray) {
 						if (btnsEnvironment instanceof JButton) {
 							btnsEnvironment.setEnabled(true);
 						}
@@ -355,7 +349,7 @@ public class Principal {
 							btnsBrowsers.setEnabled(false);
 						}
 					}
-					for (JButton btnsEnvironment : botonesIzquierdosArray) {
+					for (JButton btnsEnvironment : botonesAmbientesArray) {
 						if (btnsEnvironment instanceof JButton) {
 							btnsEnvironment.setEnabled(true);
 						}
@@ -381,7 +375,7 @@ public class Principal {
 							btnsBrowsers.setEnabled(false);
 						}
 					}
-					for (JButton btnsEnvironment : botonesIzquierdosArray) {
+					for (JButton btnsEnvironment : botonesAmbientesArray) {
 						if (btnsEnvironment instanceof JButton) {
 							btnsEnvironment.setEnabled(true);
 						}
@@ -389,18 +383,34 @@ public class Principal {
 				}
 			});
 
+			JButton boton1 = new JButton("Login");
+			boton1.setEnabled(false);
+			boton1.setAlignmentX(Component.CENTER_ALIGNMENT);
+			botonesTests.add(boton1);
+			boton1.addActionListener(e -> {
+				Login.main(args);
+
+			});
+
+			JButton boton2 = new JButton("Transferencias Propias");
+			boton2.setEnabled(false);
+			boton2.setAlignmentX(Component.CENTER_ALIGNMENT);
+			botonesTests.add(boton2);
+			boton2.addActionListener(e -> {
+				Transferencia_propia.main(args);
+
+			});
+
 			JPanel panelMensaje = new JPanel();
 			panelMensaje.setLayout(new BoxLayout(panelMensaje, BoxLayout.Y_AXIS));
 
 			obj.addPropertyChangeListener(evt -> {
-
 				panelMensaje.setBackground(colorResultado);
 				JLabel label = new JLabel(iconoRedimensionado2(iconoResultado));
 				panelMensaje.setBorder(new LineBorder(Color.black));
 				label.setHorizontalAlignment(JLabel.CENTER);
 				panelMensaje.add(label);
 				panelMensaje.setVisible(mostrarResultado);
-				System.out.println("LLego aqui");
 
 				String texto = "";
 
@@ -433,9 +443,9 @@ public class Principal {
 			c.gridx = 1;
 			frame.add(panelBrowser, c);
 			c.gridx = 2;
-			frame.add(panelIzquierdo, c);
+			frame.add(panelAmbientes, c);
 			c.gridx = 3;
-			frame.add(panelDerecho, c);
+			frame.add(panelTests, c);
 			c.gridy = 1;
 			c.gridwidth = 4;
 			c.gridx = 0;
@@ -485,7 +495,6 @@ public class Principal {
 		}
 
 		preferencias.valorAtributo("paginaWeb", Bi_helper.obtenerDato(temp, "url", AMBIENTE_JSON));
-
 	}
 
 	private static Icon iconoRedimensionado(ImageIcon icono) {
@@ -500,20 +509,19 @@ public class Principal {
 		return iconoRedimensionado;
 	}
 
-	public static void resultado(String[] errores) {
-		String[] old = arregloResultado;
+	public static void resultado(ArrayList<String> errores, Boolean ejecutadoExitosamente) {
+		ArrayList<String> old = arregloResultado;
 		mostrarResultado = true;
-		if (errores.length == 0) {
-			String arreglo[] = { "Test ejecutado exitosamente" };
+		if (ejecutadoExitosamente) {
+			ArrayList<String> arreglo = new ArrayList<>();
+			arreglo.add("Test ejecutado exitosamente");
 			arregloResultado = arreglo;
 			colorResultado = Color.green;
 			iconoResultado = (ImageIcon) iconoRedimensionado2(iconoCorrecto);
 		} else {
 			arregloResultado = errores;
-			System.out.println("Prueba");
 			colorResultado = Color.red;
 			iconoResultado = (ImageIcon) iconoRedimensionado2(iconoFallo);
-
 		}
 		escucha.firePropertyChange("arregloResultado", old, errores);
 	}
@@ -522,4 +530,13 @@ public class Principal {
 		escucha.addPropertyChangeListener(listener);
 	}
 
+	@Override
+	public void onListaMensajeChanged(ArrayList<String> nuevaListaMensaje) {
+		for (String mensaje : nuevaListaMensaje) {
+			if (mensaje.equals("Test ejecutado exitosamente") && nuevaListaMensaje.size() == 1) {
+				resultado(nuevaListaMensaje, true);
+			} else
+				resultado(nuevaListaMensaje, false);
+		}
+	}
 }

@@ -2,10 +2,13 @@ package config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Mensajes {
 
-    public static ArrayList<String> listaMensaje = new ArrayList<String>();
+    private static ArrayList<String> listaMensaje = new ArrayList<String>();
+    private static List<MensajesObserver> observers = new ArrayList<>();
+
 
     public HashMap<Integer, String> errores = new HashMap<>();
 
@@ -18,19 +21,34 @@ public class Mensajes {
     }
 
     public static Mensajes MENSAJES() {
-		if (MENSAJES == null) {
-			MENSAJES = new Mensajes();
-		}
+        if (MENSAJES == null) {
+            MENSAJES = new Mensajes();
+        }
 
-		return MENSAJES;
-	}
+        return MENSAJES;
+    }
 
     public void agregarMensaje(String mensaje) {
         listaMensaje.add(mensaje);
+        notifyObservers();
     }
 
     public String getMensaje() {
         return listaMensaje.toString();
     }
-}
 
+    public static void addObserver(MensajesObserver observer) {
+        observers.add(observer);
+    }
+
+    public static void removeObserver(MensajesObserver observer) {
+        observers.remove(observer);
+    }
+
+    private static void notifyObservers() {
+        for (MensajesObserver observer : observers) {
+            observer.onListaMensajeChanged(listaMensaje);
+        }
+    }
+
+}
