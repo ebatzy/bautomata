@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.aventstack.extentreports.ExtentTest;
 
 import config.Preferencias;
+import helpers.Bi_helper;
 import libraries.ReadExcelFile;
 import libraries.Reports;
 import libraries.WriteExcelFile;
@@ -17,8 +18,10 @@ public class Login_model {
 	WriteExcelFile writeFile = new WriteExcelFile();
 
 	static Preferencias preferencias = Preferencias.PREFERENCIAS();
+	Login_page login = new Login_page();
 	private static String RUTA_EXCEL = preferencias.obtenerAtributo("rutaExcel");
 	private static String PAGINA_WEB = preferencias.obtenerAtributo("paginaWeb");
+	private static String NIVEL = preferencias.obtenerAtributo("nivelTest");
 
 	public Login_model() throws InterruptedException, NoSuchFieldException, SecurityException, IllegalArgumentException,
 			IllegalAccessException {
@@ -26,14 +29,18 @@ public class Login_model {
 	}
 
 	public void procesar(ExtentTest test) {
+
 		try {
 			iniciar(test);
 			writeCodigo(test);
 			writeUsuario(test);
 			writeContrasenia(test);
 			clickIngreso(test);
-			String log = validarInicio(test);
-			loginLog(log);
+
+			if (NIVEL.equals("2")) {
+				String log = validarInicio(test);
+				loginLog(log);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,26 +112,30 @@ public class Login_model {
 				Reports.logPass(test, "Inicio de sesion correcto");
 				return "Inicio de sesion correcto";
 			} else if (loginPage.existeErrorCodigo()) {
-				Reports.logFail(test, loginPage.obtenerErrorCodigo().toString());
+				Reports.logCaptura(test, loginPage.obtenerErrorCodigo().toString(),
+						Bi_helper.screenShot("", "", "Login", login.enviarDriver(), false), false);
 				return loginPage.obtenerErrorCodigo();
 			} else if (loginPage.existeErrorUsuario()) {
-				Reports.logFail(test, loginPage.obtenerErrorUsuario().toString());
+				Reports.logCaptura(test, login.obtenerErrorUsuario().toString(),
+						Bi_helper.screenShot("", "", "Login", login.enviarDriver(), false), false);
 				return loginPage.obtenerErrorUsuario();
 			} else if (loginPage.existeErrorContrasenia()) {
-				Reports.logFail(test, loginPage.obtenerErrorContrasenia().toString());
+				Reports.logCaptura(test, loginPage.existeMensajeError().toString(),
+						Bi_helper.screenShot("", "", "Login", login.enviarDriver(), false), false);
 				return loginPage.obtenerErrorContrasenia();
 			} else if (loginPage.existeMensajeError()) {
-				Reports.logFail(test, loginPage.obtenerMensajeError().toString());
+				Reports.logCaptura(test, loginPage.obtenerMensajeError().toString(),
+						Bi_helper.screenShot("", "", "Login", login.enviarDriver(), false), false);
 				return loginPage.obtenerMensajeError();
 			} else {
-				Reports.logFail(test, "Error inicio de sesion");
+				Reports.logCaptura(test, "Error inicio de sesion",
+						Bi_helper.screenShot("", "", "Login", login.enviarDriver(), false), false);
 				return "Error inicio de sesion";
 			}
 
 		} catch (Exception e) {
 			return null;
 		}
-
 	}
 
 	public void loginLog(String log) {

@@ -60,7 +60,7 @@ public class Transferencia_propia_model {
 						tipoCuentaDebitar, tipoCuentaAcreditar, tipoCambio);
 			}
 
-			errorTransferencia = terminaTransaccion(test, tipoCuentaDebitar, tipoCuentaAcreditar);
+			errorTransferencia = terminaTransaccion(test, cuentaDebitar, cuentaAcreditar);
 
 			writeLog(test, linea, errorTransferencia);
 
@@ -74,6 +74,7 @@ public class Transferencia_propia_model {
 	public void accederTransferenciasPropias(ExtentTest test) {
 		try {
 			principalPage.clickMenuTransferencias();
+			Thread.sleep(1000);
 			transferenciaPropiaPage.clicktransferenciaMonetariasYAhorros();
 			Reports.logPass(test, "Acceso a transferencias propias correcto");
 		} catch (Exception e) {
@@ -155,7 +156,6 @@ public class Transferencia_propia_model {
 			if (transferenciaPropiaPage.esVisibleBtnConfirmar()) {
 				transferenciaPropiaPage.clickBtnConfirmar();
 				Reports.logPass(test, "Clic en boton confirmar correcto");
-				Thread.sleep(3000);
 				return true;
 			} else
 				Reports.logFail(test, "Fallo el clic en boton confirmar");
@@ -172,6 +172,7 @@ public class Transferencia_propia_model {
 		try {
 			String montoCredito = "";
 			if (transferenciaPropiaPage.esVisibleLblAutorizacion()) {
+				Thread.sleep(2000);
 				if (monedaCruzada) {
 					montoCredito = transferenciaPropiaPage.obtenerTextolblMontoAcreditado$();
 				} else
@@ -179,7 +180,7 @@ public class Transferencia_propia_model {
 				writeFile.writeBitacora2(RUTA_BITACORA, ReadExcelFile.search(RUTA_BITACORA) + 2,
 						transferenciaPropiaPage.obtenerTextoLblAutorizacion(),
 						transferenciaPropiaPage.obtenerTextoLblCuentaDebitada(), tipoCuentaDebitar, cuentaDebito, monto,
-						transferenciaPropiaPage.obtenerTextoLblCuentaAcreditadaLocation(), tipoCuentaAcreditar,
+						transferenciaPropiaPage.obtenerTextoLblCuentaAcreditada(), tipoCuentaAcreditar,
 						CuentaCredito, montoCredito, tipoCambio);
 				Reports.logPass(test, "Transaccion terminada con exito");
 			}
@@ -188,26 +189,25 @@ public class Transferencia_propia_model {
 		}
 	}
 
-	public String terminaTransaccion(ExtentTest test, String tipoCuentaDebitar, String tipoCuentaAcreditar) {
+	public String terminaTransaccion(ExtentTest test, String cuentaDebito, String cuentaCredito) {
 		String errorTransferencia = "";
 		try {
 			if (transferenciaPropiaPage.esVisibleLblAutorizacion()) {
 				errorTransferencia = transferenciaPropiaPage.obtenerTextoLblTransferenciaExitosa();
-				Bi_helper.screenShot(tipoCuentaDebitar, tipoCuentaAcreditar, "Transferencias Propias",
-						transferenciaPropiaPage.enviarDriver(), true);
-				// Reports.logPass(test, "Transaccion terminada con exito");
+				Reports.logCaptura(test, errorTransferencia, Bi_helper.screenShot(cuentaDebito, cuentaCredito,
+						"Transferencias Propias", transferenciaPropiaPage.enviarDriver(), true), true);
 			} else if (transferenciaPropiaPage.isDisplayLblTransferenciaErronea()) {
 				errorTransferencia = transferenciaPropiaPage.obtenerTextoLblTransferenciaErronea();
-				Bi_helper.screenShot(tipoCuentaDebitar, tipoCuentaAcreditar, "Transferencias Propias",
-						transferenciaPropiaPage.enviarDriver(), false);
-				Reports.logFail(test, errorTransferencia);
+				Reports.logCaptura(test, errorTransferencia,
+						Bi_helper.screenShot(cuentaDebito, cuentaCredito, "Transferencias Propias",
+								transferenciaPropiaPage.enviarDriver(), false),
+						false);
 			} else {
 				errorTransferencia = "Error en transferencia";
-				Bi_helper.screenShot(tipoCuentaDebitar, tipoCuentaAcreditar, "Transferencias Propias",
-						transferenciaPropiaPage.enviarDriver(), false);
-				Reports.logFail(test, errorTransferencia);
+				Reports.logCaptura(test, errorTransferencia, Bi_helper.screenShot(cuentaDebito, cuentaCredito,
+						"Transferencias Propias", transferenciaPropiaPage.enviarDriver(), false), false);
 			}
-
+			Thread.sleep(1000);
 			return errorTransferencia;
 
 		} catch (Exception e) {

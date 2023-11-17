@@ -38,11 +38,7 @@ public class Transferencia_propia_page extends General_page {
 	public By formMontoDebito$V = By.xpath(Bi_helper.obtenerDato("formMontoDebito$V", "xpath", DATA_JSON));
 	public By lblTasaDeCambioCompra = By.id(Bi_helper.obtenerDato("lblTasaDeCambioCompra", "id", DATA_JSON));
 	public By formMontoDebito$C = By.xpath(Bi_helper.obtenerDato("formMontoDebito$C", "xpath", DATA_JSON));
-	// public By formMontoDebitoQC =
-	// By.xpath(Bi_helper.obtenerDato("formMontoDebitoQC", "xpath", DATA_JSON));
 	public By lblTransferenciaErronea = By.xpath(Bi_helper.obtenerDato("lblTransferenciaErronea", "xpath", DATA_JSON));
-	// public By lblMontoAcreditadoQ =
-	// By.xpath(Bi_helper.obtenerDato("lblmontoAcreditadoQ", "xpath", DATA_JSON));
 	public By lblMontoAcreditado$ = By.xpath(Bi_helper.obtenerDato("lblMontoAcreditado$", "xpath", DATA_JSON));
 	public By lblTxtTasaVenta = By.id(Bi_helper.obtenerDato("lblTxtTasaVenta", "id", DATA_JSON));
 	public By lblTxtTasaCompra = By.id(Bi_helper.obtenerDato("lblTxtTasaCompra", "id", DATA_JSON));
@@ -128,7 +124,7 @@ public class Transferencia_propia_page extends General_page {
 		return obtenerTexto(lblCuentaDebitada);
 	}
 
-	public String obtenerTextoLblCuentaAcreditadaLocation() {
+	public String obtenerTextoLblCuentaAcreditada() {
 		return obtenerTexto(lblCuentaAcreditada);
 	}
 

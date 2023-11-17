@@ -30,7 +30,7 @@ public class Principal_page extends General_page {
 
 	public Boolean existeCerrarSesion() {
 		return esVisible(cerrarSesion);
-	}
+	}	
 
 	public void cerrarSesion() {
 		esperaExplicita(cerrarSesion, Duration.ofSeconds(10));

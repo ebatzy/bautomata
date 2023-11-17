@@ -1,6 +1,7 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 import helpers.Bi_helper;
 
@@ -68,5 +69,9 @@ public class Login_page extends General_page {
 
 	public Boolean existeMensajeError() {
 		return esVisible(mensajeError);
+	}
+
+	public WebDriver enviarDriver() {
+		return obtenerDriver();
 	}
 }

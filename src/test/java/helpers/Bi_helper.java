@@ -19,8 +19,11 @@ import javax.json.JsonReader;
 
 import org.openqa.selenium.WebDriver;
 
+import com.aventstack.extentreports.ExtentTest;
+
 import config.Mensajes;
 import config.Preferencias;
+import libraries.Reports;
 
 public class Bi_helper {
 	static Preferencias preferencias = Preferencias.PREFERENCIAS();
@@ -100,18 +103,27 @@ public class Bi_helper {
 		return formato.format(fecha);
 	}
 
-	public static void screenShot(String cuentaDebito, String cuentaCredito, String tipoTransaccion, WebDriver driver,
+	public static String screenShot(String cuentaDebito, String cuentaCredito, String tipoTransaccion, WebDriver driver,
 			boolean completada) {
 		try {
 			Robot robot = new Robot();
+			String fileName = "";
+			String documents = System.getProperty("user.home") + "/Documents/Automatizacion BEL Web/";
+			String documentsPath = documents + "Capturas Automatizacion " + Hoy(1) + "/" +
+					tipoTransaccion;
 
-			String documentsPath = System.getProperty("user.home") + "/Documents/Automatizacion BEL Web/"
-					+ tipoTransaccion + " " + Hoy(1);
-
-			if (completada) {
-				documentsPath = documentsPath + "/Completadas/";
+			if (tipoTransaccion.equals("Login")) {
+				fileName = documentsPath + "/Login "+ Hoy(2) + ".png";
+				System.out.println(fileName);
 			} else {
-				documentsPath = documentsPath + "/No_Completadas/";
+				if (completada) {
+					documentsPath = documentsPath + "/Completadas/";
+				} else {
+					documentsPath = documentsPath + "/No_Completadas/";
+				}
+
+				fileName = documentsPath + "BEL WEB " + tipoTransaccion + " de CTA " + cuentaDebito + " a "
+						+ cuentaCredito + " " + Hoy(2) + ".png";
 			}
 
 			File folder = new File(documentsPath);
@@ -119,14 +131,17 @@ public class Bi_helper {
 				folder.mkdirs();
 			}
 
-			String fileName = documentsPath + "BEL WEB " + tipoTransaccion + " de CTA " + cuentaDebito + " a "
-					+ cuentaCredito + " " + Hoy(2) + ".png";
 			Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
 			BufferedImage screenFullImage = robot.createScreenCapture(screenRect);
 			ImageIO.write(screenFullImage, "png", new File(fileName));
+			return fileName.substring(documents.length());
 
-		} catch (AWTException | IOException ex) {
+		} catch (AWTException |
+
+				IOException ex) {
 		}
+		return null;
+		
 	}
 
 	public static String obtenerTipoCuenta(String cadena) {
@@ -190,19 +205,19 @@ public class Bi_helper {
 		String temp = "";
 
 		if (mensajes.errores.containsKey(codigo)) {
-            if (datos != null && !datos.isEmpty()) {
+			if (datos != null && !datos.isEmpty()) {
 				temp = mensajes.errores.get(codigo);
-                
-				for (Map.Entry<String, String> entry : datos.entrySet()) {
-                    temp = temp.replace(entry.getKey(), entry.getValue());
-                }
-            } else {
-                temp = codigo.toString() + " " + mensajes.errores.get(codigo);
-            }
-        } else {
-            temp = "-1 Error desconocido";
-        }
 
-        mensajes.agregarMensaje(temp);
+				for (Map.Entry<String, String> entry : datos.entrySet()) {
+					temp = temp.replace(entry.getKey(), entry.getValue());
+				}
+			} else {
+				temp = codigo.toString() + " " + mensajes.errores.get(codigo);
+			}
+		} else {
+			temp = "-1 Error desconocido";
+		}
+
+		mensajes.agregarMensaje(temp);
 	}
 }

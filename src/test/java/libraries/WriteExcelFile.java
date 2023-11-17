@@ -51,7 +51,6 @@ public class WriteExcelFile {
 			String tipoCuentaDebito, String cuentaDebito, String montoD, String monedaC, String tipoCuentaCredito,
 			String cuentaCredito, String montoC, String tipoCambio) throws IOException {
 
-		String stringWithoutNumbers = "";
 		String resultString = "";
 		String resultString2 = "";
 		String montoC2 = montoC;
@@ -86,8 +85,8 @@ public class WriteExcelFile {
 		nextCell.setCellValue(Bi_helper.Hoy(1));
 		nextCell.setCellStyle(cellStyle);
 
-		stringWithoutNumbers = monedaD.replaceAll("\\d", "");
-		resultString = stringWithoutNumbers.substring(2);
+		if(monedaD.startsWith("BIQ") || monedaD.startsWith("BI Q")) resultString = "Q.";
+		else if(monedaD.startsWith("BI$") || monedaD.startsWith("BI $")) resultString = "$.";;	
 		nextCell = row.createCell(3);
 		nextCell.setCellValue(resultString);
 		nextCell.setCellStyle(cellStyle);
@@ -104,8 +103,8 @@ public class WriteExcelFile {
 		nextCell.setCellValue(montoD);
 		nextCell.setCellStyle(cellStyle);
 
-		stringWithoutNumbers = monedaC.replaceAll("\\d", "");
-		resultString2 = stringWithoutNumbers.substring(2);
+		if(monedaC.startsWith("BIQ") || monedaC.startsWith("BI Q")) resultString2 = "Q.";
+		else if(monedaC.startsWith("BI$") || monedaC.startsWith("BI $")) resultString2 = "$.";
 		nextCell = row.createCell(7);
 		nextCell.setCellValue(resultString2);
 		nextCell.setCellStyle(cellStyle);

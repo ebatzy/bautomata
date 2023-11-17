@@ -2,6 +2,7 @@ package libraries;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
@@ -43,6 +44,13 @@ public class Reports {
 
 	public static void logFail(ExtentTest test, String message) {
 		test.log(Status.FAIL, message);
+	//	test.fail(message, MediaEntityBuilder.createScreenCaptureFromPath("Inicio Incorrecto.png").build());
+	}
+
+	public static void logCaptura(ExtentTest test, String message, String ruta, Boolean testPass) {
+		if(testPass) {
+			test.pass(message, MediaEntityBuilder.createScreenCaptureFromPath(ruta).build()); }
+		else{ test.fail(message, MediaEntityBuilder.createScreenCaptureFromPath(ruta).build()); }
 	}
 
 	public static void logWarning(ExtentTest test, String message) {
@@ -59,6 +67,10 @@ public class Reports {
 
 	public static void assign(ExtentTest test, String autor, String category, String device) {
 		test.assignAuthor(autor).assignCategory(category).assignDevice(device);
+	}
+
+	public static void captura(ExtentTest test) {
+		test.fail("error al iniciar sesión", MediaEntityBuilder.createScreenCaptureFromPath(RUTA_REPORTE+"/Inicio Incorrecto.png").build());
 	}
 
 	public static void cerrarTest() {
