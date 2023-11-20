@@ -23,8 +23,7 @@ import config.Preferencias;
 public class General_page {
 
 	private static WebDriver driver;
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
-	private static String NAVEGADOR_TIPO = preferencias.obtenerAtributo("navegadorTipo");
+	private String NAVEGADOR_TIPO = Preferencias.getInstance().obtenerAtributo("navegadorTipo");
 
 	public General_page() throws InterruptedException {
 		super();
@@ -37,7 +36,6 @@ public class General_page {
 	 * @throws InterruptedException
 	 */
 	public WebDriver iniciarNavegador() throws InterruptedException {
-
 		if (NAVEGADOR_TIPO == "1") {
 			ChromeOptions opciones = new ChromeOptions();
 			opciones.addArguments("--start-maximized");
@@ -45,7 +43,7 @@ public class General_page {
 			driver = new ChromeDriver(opciones);
 		} else if (NAVEGADOR_TIPO == "2") {
 			FirefoxOptions opciones = new FirefoxOptions();
-			opciones.addArguments("--start-maximized");
+			// opciones.addArguments("--start-maximized"); No cuenta con esta opcion
 
 			driver = new FirefoxDriver(opciones);
 		} else if (NAVEGADOR_TIPO == "3") {
@@ -90,6 +88,10 @@ public class General_page {
 	 */
 	public void navegar(String url) {
 		driver.get(url);
+
+		if (NAVEGADOR_TIPO == "2") {
+			driver.manage().window().maximize();
+		}
 	}
 
 	/**
@@ -206,7 +208,6 @@ public class General_page {
 		for (WebElement option : options) {
 			if (option.getText().contains(valor)) {
 				option.click();
-				// System.out.println(option.getText().toString());
 				return true;
 			}
 		}

@@ -10,9 +10,7 @@ import config.Preferencias;
 import libraries.ReadExcelFile;
 
 public class Dtransferencia_propia extends ReadExcelFile {
-
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
-	private static String RUTA_EXCEL = preferencias.obtenerAtributo("rutaExcel");
+	private String RUTA_EXCEL = Preferencias.getInstance().obtenerAtributo("rutaExcel");
 
 	public static class Operacion {
 		public String cuentaDebito;

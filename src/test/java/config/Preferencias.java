@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Preferencias {
-	private Map<String, Object> atributos = new HashMap<>();
 
-	private static Preferencias PREFERENCIAS;
+	private static Preferencias instancia;
+	private Map<String, String> atributos;
 
 	private Preferencias() {
 		String home = System.getProperty("user.home");
+		atributos = new HashMap<>();
+
 		atributos.put("home", home);
 		atributos.put("rutaExcel", home + "\\Documents\\Automatizacion BEL Web\\Datos.xlsx");
 		atributos.put("paginaWeb", "https://www.bienlinea.bi.com.gt");
@@ -18,18 +20,17 @@ public class Preferencias {
 		atributos.put("rutaJsonAmbiente", home + "\\Documents\\Automatizacion BEL Web\\Resourses\\ambientes.json");
 		atributos.put("rutaJsonConfig", home + "\\Documents\\Automatizacion BEL Web\\Resourses\\Config.json");
 		atributos.put("rutaReporte", home + "\\Documents\\Automatizacion BEL Web\\Reporte.html");
-		atributos.put("nivelTest", 1);
+		atributos.put("nivelTest", "1");
 		atributos.put("navegadorTipo", "");
 		atributos.put("navegadorNombre", "");
-
 	}
 
-	public static Preferencias PREFERENCIAS() {
-		if (PREFERENCIAS == null) {
-			PREFERENCIAS = new Preferencias();
+	public static synchronized Preferencias getInstance() {
+		if (instancia == null) {
+			instancia = new Preferencias();
 		}
 
-		return PREFERENCIAS;
+		return instancia;
 	}
 
 	/**
@@ -41,11 +42,12 @@ public class Preferencias {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public String obtenerAtributo(String nombre) {
+	public synchronized String obtenerAtributo(String nombre) {
 		if (atributos.containsKey(nombre)) {
-			return String.valueOf(atributos.get(nombre));
+			System.out.println("Obteniendo atributo " + nombre + ", valor: "+atributos.get(nombre));
+			return atributos.get(nombre);
 		} else {
-			throw new IllegalArgumentException("Nombre de atributo no v�lido: " + nombre);
+			throw new IllegalArgumentException("Nombre de atributo no vlido: " + nombre);
 		}
 	}
 
@@ -58,7 +60,8 @@ public class Preferencias {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void valorAtributo(String nombre, Object valor) {
+	public synchronized void valorAtributo(String nombre, String valor) {
+		System.out.println("Asignando valor " + valor + " al atributo " + nombre);
 		atributos.put(nombre, valor);
 	}
 }

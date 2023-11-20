@@ -17,11 +17,10 @@ public class Login_model {
 	ReadExcelFile readFile = new ReadExcelFile();
 	WriteExcelFile writeFile = new WriteExcelFile();
 
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
 	Login_page login = new Login_page();
-	private static String RUTA_EXCEL = preferencias.obtenerAtributo("rutaExcel");
-	private static String PAGINA_WEB = preferencias.obtenerAtributo("paginaWeb");
-	private static String NIVEL = preferencias.obtenerAtributo("nivelTest");
+	private String RUTA_EXCEL = Preferencias.getInstance().obtenerAtributo("rutaExcel");
+	private String PAGINA_WEB = Preferencias.getInstance().obtenerAtributo("paginaWeb");
+	private String NIVEL = Preferencias.getInstance().obtenerAtributo("nivelTest");
 
 	public Login_model() throws InterruptedException, NoSuchFieldException, SecurityException, IllegalArgumentException,
 			IllegalAccessException {

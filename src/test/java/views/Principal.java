@@ -11,10 +11,11 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.IOException;
+import java.awt.Container;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,7 +29,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-
 import config.Mensajes;
 import config.MensajesObserver;
 import config.Preferencias;
@@ -36,507 +36,377 @@ import controllers.Login;
 import controllers.transferencia.Transferencia_propia;
 import helpers.Bi_helper;
 
-public class Principal implements MensajesObserver {
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
-	private static final String AMBIENTE_JSON = preferencias.obtenerAtributo("rutaJsonAmbiente");
+public class Principal extends JFrame implements MensajesObserver {
+	static Preferencias preferencias = Preferencias.getInstance();
+	private String AMBIENTE_JSON = preferencias.obtenerAtributo("rutaJsonAmbiente");
+	private static Map<Integer, String> ambientes = new HashMap<>();
 
-	static ImageIcon iconoChrome = new ImageIcon("src/test/resources/img/Chrome.png");
-	static ImageIcon iconoFirefox = new ImageIcon("src/test/resources/img/Firefox.png");
-	static ImageIcon iconoEdge = new ImageIcon("src/test/resources/img/Edge.png");
-	static ImageIcon iconoSafari = new ImageIcon("src/test/resources/img/Safari.png");
-	static ImageIcon iconoFallo = new ImageIcon("src/test/resources/img/Fallo.png");
-	static ImageIcon iconoCorrecto = new ImageIcon("src/test/resources/img/Correcto.png");
+	private static JPanel panelNivel = new JPanel();
+	private static JPanel panelNavegador = new JPanel();
+	private static JPanel panelAmbiente = new JPanel();
+	private static JPanel panelPruebas = new JPanel();
+	private static JPanel panelReinicio = new JPanel(new BorderLayout());
+	private static JPanel panelMensaje = new JPanel(new BorderLayout());
+	private static JLabel labelMensaje = new JLabel();
 
-	static ArrayList<String> arregloResultado = new ArrayList<String>();
-	static ImageIcon iconoResultado;
-	static Color colorResultado;
-	static Boolean mostrarResultado = false;
-
-	private static PropertyChangeSupport escucha;
+	private Color colorFondo = new Color(158, 218, 255);
 
 	public Principal() {
-		Mensajes.addObserver(this);
+		setTitle("Automatizaciones Transversales");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(new GridBagLayout());
+		setSize(900, 700);
+		getAmbientes();
+
+		GridBagConstraints c = new GridBagConstraints();
+
+		c.insets = new Insets(5, 2, 2, 2);
+		c.gridx = 0;
+		c.gridy = 0;
+		add(columnaNivel(panelNivel, panelNavegador), c);
+		c.gridx = 1;
+		add(columnaNavegador(panelNavegador, panelAmbiente), c);
+		c.gridx = 2;
+		add(columnaAmbiente(panelAmbiente, panelPruebas), c);
+		c.gridx = 3;
+		add(columnaTest(panelPruebas, panelReinicio), c);
+		c.gridy = 1;
+		c.gridwidth = 4;
+		c.gridx = 0;
+		add(btnReinicio(panelReinicio), c);
+
+		c.gridy = 2;
+		c.gridwidth = 5;
+		c.gridx = 0;
+		add(vistaMensaje(panelMensaje), c);
+
+		System.out.println("HashCode de la instancia en views: " + preferencias.hashCode());
+
+		iniciarBotones();
+		getContentPane().setBackground(new Color(199, 238, 255));
+		setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		escucha = new PropertyChangeSupport(new Principal());
+	private JPanel columnaNivel(JPanel actual, JPanel siguiente) {
+		JLabel titulo = new JLabel("Nivel", SwingConstants.CENTER);
+		JPanel secundario = new JPanel(new BorderLayout());
 
-		Color colorFondo = new Color(158, 218, 255);
+		secundario.setBackground(colorFondo);
+		secundario.setPreferredSize(new Dimension(150, 270));
 
-		SwingUtilities.invokeLater(() -> {
+		titulo.setPreferredSize(new Dimension(300, 25));
+		titulo.setFont(new Font("Arial", Font.BOLD, 15));
 
-			Principal obj = new Principal();
+		actual.setLayout(new BoxLayout(actual, BoxLayout.Y_AXIS));
+		actual.setBackground(new Color(199, 238, 255));
 
-			JFrame frame = new JFrame("Automatizaciones Transversales");
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-
-			JPanel panelNivel = new JPanel(new BorderLayout());
-			panelNivel.setBackground(colorFondo);
-			panelNivel.setPreferredSize(new Dimension(150, 270));
-			JLabel tituloNivel = new JLabel("Nivel", SwingConstants.CENTER);
-			tituloNivel.setPreferredSize(new Dimension(300, 25));
-			tituloNivel.setFont(new Font("Arial", Font.BOLD, 15));
-			panelNivel.add(tituloNivel, BorderLayout.NORTH);
-
-			JPanel botonesNiveles = new JPanel();
-			botonesNiveles.setLayout(new BoxLayout(botonesNiveles, BoxLayout.Y_AXIS));
-			botonesNiveles.setBackground(new Color(199, 238, 255));
-			panelNivel.add(botonesNiveles, BorderLayout.CENTER);
-
-			JPanel panelBrowser = new JPanel(new BorderLayout());
-			panelBrowser.setBackground(colorFondo);
-			panelBrowser.setPreferredSize(new Dimension(150, 270));
-			JLabel tituloBrowser = new JLabel("Navegador", SwingConstants.CENTER);
-			tituloBrowser.setPreferredSize(new Dimension(150, 25));
-			tituloBrowser.setFont(new Font("Arial", Font.BOLD, 15));
-			panelBrowser.add(tituloBrowser, BorderLayout.NORTH);
-
-			JPanel botonesBrowsers = new JPanel();
-			botonesBrowsers.setLayout(new BoxLayout(botonesBrowsers, BoxLayout.Y_AXIS));
-			botonesBrowsers.setBackground(new Color(199, 238, 255));
-			panelBrowser.add(botonesBrowsers, BorderLayout.CENTER);
-
-			JPanel panelAmbientes = new JPanel(new BorderLayout());
-			panelAmbientes.setBackground(new Color(158, 218, 255));
-			panelAmbientes.setPreferredSize(new Dimension(150, 270));
-			JLabel tituloIzquierdo = new JLabel("QA's", SwingConstants.CENTER);
-			tituloIzquierdo.setPreferredSize(new Dimension(300, 25));
-			tituloIzquierdo.setFont(new Font("Arial", Font.BOLD, 15));
-			panelAmbientes.add(tituloIzquierdo, BorderLayout.NORTH);
-
-			JPanel botonesAmbientes = new JPanel();
-			botonesAmbientes.setLayout(new BoxLayout(botonesAmbientes, BoxLayout.Y_AXIS));
-			botonesAmbientes.setBackground(new Color(199, 238, 255));
-			panelAmbientes.add(botonesAmbientes, BorderLayout.CENTER);
-
-			JPanel panelTests = new JPanel(new BorderLayout());
-			panelTests.setBackground(new Color(158, 218, 255));
-			panelTests.setPreferredSize(new Dimension(200, 270));
-			JLabel tituloDerecho = new JLabel("Tests", SwingConstants.CENTER);
-			tituloDerecho.setPreferredSize(new Dimension(300, 25));
-			tituloDerecho.setFont(new Font("Arial", Font.BOLD, 15));
-			panelTests.add(tituloDerecho, BorderLayout.NORTH);
-
-			JPanel botonesTests = new JPanel();
-			botonesTests.setLayout(new BoxLayout(botonesTests, BoxLayout.Y_AXIS));
-			botonesTests.setBackground(new Color(199, 238, 255));
-
-			JButton botonNivel1 = new JButton("Nivel 1");
-			botonNivel1.setEnabled(true);
-			botonNivel1.setAlignmentX(Component.CENTER_ALIGNMENT);
-			c.insets.set(10, 10, 10, 10);
-			botonesNiveles.add(botonNivel1);
-			botonNivel1.addActionListener(e -> {
-				preferencias.valorAtributo("nivelTest", 1);
-				botonNivel1.setBackground(colorFondo);
+		secundario.add(titulo, BorderLayout.NORTH);
+		for (int i = 1; i <= 3; i++) {
+			int valor = i;
+			JButton temp = new JButton("Nivel " + valor);
+			temp.setAlignmentX(Component.CENTER_ALIGNMENT);
+			temp.addActionListener(new AccionBtn(actual, siguiente));
+			temp.addActionListener(e -> {
+				preferencias.valorAtributo("nivelTest", String.valueOf(valor));
+				temp.setBackground(new Color(158, 218, 255));
+				temp.setSelected(true);
 			});
-			botonNivel1.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsLevels : botonesNiveles.getComponents()) {
-						if (btnsLevels instanceof JButton) {
-							btnsLevels.setEnabled(false);
-						}
-					}
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(true);
-						}
-					}
+
+			actual.add(temp);
+		}
+
+		secundario.add(actual, BorderLayout.CENTER);
+
+		return secundario;
+	}
+
+	private JPanel columnaNavegador(JPanel actual, JPanel siguiente) {
+		JLabel titulo = new JLabel("Navegador", SwingConstants.CENTER);
+		JPanel secundario = new JPanel(new BorderLayout());
+
+		JButton btnChrome = new JButton("Chrome",
+				iconoRedimensionado(new ImageIcon("src/test/resources/img/Chrome.png"), 25, 25));
+		JButton btnFirefox = new JButton("Firefox",
+				iconoRedimensionado(new ImageIcon("src/test/resources/img/Firefox.png"), 25, 25));
+		JButton btnEdge = new JButton("Edge",
+				iconoRedimensionado(new ImageIcon("src/test/resources/img/Edge.png"), 25, 25));
+		JButton btnSafari = new JButton("Safari",
+				iconoRedimensionado(new ImageIcon("src/test/resources/img/Safari.png"), 25, 25));
+
+		secundario.setBackground(colorFondo);
+		secundario.setPreferredSize(new Dimension(150, 270));
+
+		titulo.setPreferredSize(new Dimension(300, 25));
+		titulo.setFont(new Font("Arial", Font.BOLD, 15));
+
+		actual.setLayout(new BoxLayout(actual, BoxLayout.Y_AXIS));
+		actual.setBackground(new Color(199, 238, 255));
+
+		btnChrome.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnChrome.addActionListener(new AccionBtn(actual, siguiente));
+		btnChrome.addActionListener(e -> {
+			preferencias.valorAtributo("navegadorTipo", "1");
+			preferencias.valorAtributo("navegadorNombre", "Chrome");
+			btnChrome.setBackground(colorFondo);
+		});
+
+		btnFirefox.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnFirefox.addActionListener(new AccionBtn(actual, siguiente));
+		btnFirefox.addActionListener(e -> {
+			preferencias.valorAtributo("navegadorTipo", "2");
+			preferencias.valorAtributo("navegadorNombre", "Firefox");
+			btnFirefox.setBackground(colorFondo);
+		});
+
+		btnEdge.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnEdge.addActionListener(new AccionBtn(actual, siguiente));
+		btnEdge.addActionListener(e -> {
+			preferencias.valorAtributo("navegadorTipo", "3");
+			preferencias.valorAtributo("navegadorNombre", "Edge");
+			btnEdge.setBackground(colorFondo);
+		});
+
+		btnSafari.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnSafari.addActionListener(new AccionBtn(actual, siguiente));
+		btnSafari.addActionListener(e -> {
+			preferencias.valorAtributo("navegadorTipo", "4");
+			preferencias.valorAtributo("navegadorNombre", "Safari");
+			btnSafari.setBackground(colorFondo);
+		});
+
+		secundario.add(titulo, BorderLayout.NORTH);
+		actual.add(btnChrome);
+		actual.add(btnFirefox);
+		actual.add(btnEdge);
+		actual.add(btnSafari);
+		secundario.add(actual, BorderLayout.CENTER);
+
+		return secundario;
+	}
+
+	public JPanel columnaAmbiente(JPanel actual, JPanel siguiente) {
+		JLabel titulo = new JLabel("QA's", SwingConstants.CENTER);
+		JPanel secundario = new JPanel(new BorderLayout());
+
+		secundario.setBackground(colorFondo);
+		secundario.setPreferredSize(new Dimension(150, 270));
+
+		titulo.setPreferredSize(new Dimension(300, 25));
+		titulo.setFont(new Font("Arial", Font.BOLD, 15));
+
+		actual.setLayout(new BoxLayout(actual, BoxLayout.Y_AXIS));
+		actual.setBackground(new Color(199, 238, 255));
+
+		secundario.add(titulo, BorderLayout.NORTH);
+
+		for (Map.Entry<Integer, String> entry : ambientes.entrySet()) {
+
+			JButton boton = new JButton(entry.getValue());
+			boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			boton.addActionListener(new AccionBtn(actual, siguiente));
+			boton.addActionListener(e -> {
+				try {
+					setAmbientes(entry.getKey());
+					boton.setBackground(colorFondo);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
 				}
 			});
+			actual.add(boton);
+		}
 
-			JButton botonNivel2 = new JButton("Nivel 2");
-			botonNivel2.setEnabled(true);
-			botonNivel2.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesNiveles.add(botonNivel2);
-			botonNivel2.addActionListener(e -> {
-				preferencias.valorAtributo("nivelTest", 2);
-				botonNivel2.setBackground(colorFondo);
-			});
-			botonNivel2.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsLevels : botonesNiveles.getComponents()) {
-						if (btnsLevels instanceof JButton) {
-							btnsLevels.setEnabled(false);
-						}
-					}
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(true);
-						}
-					}
-				}
-			});
+		secundario.add(actual, BorderLayout.CENTER);
 
-			JButton botonNivel3 = new JButton("Nivel 3");
-			botonNivel3.setEnabled(true);
-			botonNivel3.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesNiveles.add(botonNivel3);
-			botonNivel3.addActionListener(e -> {
-				preferencias.valorAtributo("nivelTest", 3);
-				botonNivel3.setBackground(colorFondo);
-			});
-			botonNivel3.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsLevels : botonesNiveles.getComponents()) {
-						if (btnsLevels instanceof JButton) {
-							btnsLevels.setEnabled(false);
-						}
-					}
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(true);
-						}
-					}
-				}
-			});
-			panelTests.add(botonesTests, BorderLayout.CENTER);
+		return secundario;
+	}
 
-			/*
-			 * JButton boton3 = new JButton("Transferencias Terceros");
-			 * boton2.setEnabled(false); boton2.setAlignmentX(Component.CENTER_ALIGNMENT);
-			 * botonesDerechos.add(boton3); boton2.addActionListener(e -> {
-			 * TransferenciasTercerosExec.main(args); });
-			 */
+	public JPanel columnaTest(JPanel actual, JPanel siguiente) {
+		JLabel titulo = new JLabel("Test", SwingConstants.CENTER);
+		JPanel secundario = new JPanel(new BorderLayout());
 
-			JButton[] botonesAmbientesArray = new JButton[9];
-			for (int i = 0; i < 9; i++) {
-				final int j = i;
+		secundario.setBackground(colorFondo);
+		secundario.setPreferredSize(new Dimension(200, 270));
 
-				if (i < 8) {
-					JButton boton = new JButton("QA0" + (i + 1));
-					boton.setEnabled(false);
-					boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-					boton.addActionListener(e -> {
-						try {
-							boton.setEnabled(false);
-							boton.setBackground(colorFondo);
-							for (JButton botonIzquierdo : botonesAmbientesArray) {
-								if (botonIzquierdo != boton) {
-									botonIzquierdo.setEnabled(false);
-								}
-							}
-							for (Component comp : botonesTests.getComponents()) {
-								if (comp instanceof JButton) {
-									comp.setEnabled(true);
-								}
-							}
-							selectQA(j + 1);
-						} catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
-								| IllegalAccessException | InterruptedException e1) {
-							e1.printStackTrace();
-						}
-					});
-					boton.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							for (JButton botonIzquierdo : botonesAmbientesArray) {
-								if (botonIzquierdo != boton) {
-									botonIzquierdo.setEnabled(false);
-								}
-							}
-							for (Component comp : botonesTests.getComponents()) {
-								if (comp instanceof JButton) {
-									comp.setEnabled(true);
-								}
-							}
-						}
-					});
+		titulo.setPreferredSize(new Dimension(300, 25));
+		titulo.setFont(new Font("Arial", Font.BOLD, 15));
 
-					botonesAmbientesArray[i] = boton;
-					botonesAmbientes.add(boton);
+		actual.setLayout(new BoxLayout(actual, BoxLayout.Y_AXIS));
+		actual.setBackground(new Color(199, 238, 255));
 
-				} else {
-					JButton boton = new JButton("Produccion");
-					boton.setEnabled(false);
-					boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-					boton.addActionListener(e -> {
-						try {
-							boton.setEnabled(false);
-							boton.setBackground(colorFondo);
-							for (JButton botonIzquierdo : botonesAmbientesArray) {
-								if (botonIzquierdo != boton) {
-									botonIzquierdo.setEnabled(false);
-								}
-							}
-							for (Component comp : botonesTests.getComponents()) {
-								if (comp instanceof JButton) {
-									comp.setEnabled(true);
-								}
-							}
-							selectQA(j + 1);
-						} catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
-								| IllegalAccessException | InterruptedException e1) {
-							e1.printStackTrace();
-						}
+		JButton test1 = new JButton("Login");
+		test1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		test1.addActionListener(new AccionBtn(actual, siguiente));
+		test1.addActionListener(e -> {
+			test1.setBackground(colorFondo);
+			Login.main(null);
+		});
 
-					});
+		JButton test2 = new JButton("Transferencias Propias");
+		test2.setAlignmentX(Component.CENTER_ALIGNMENT);
+		test2.addActionListener(new AccionBtn(actual, siguiente));
+		test2.addActionListener(e -> {
+			test2.setBackground(colorFondo);
+			Transferencia_propia.main(null);
+		});
 
-					botonesAmbientesArray[i] = boton;
-					botonesAmbientes.add(boton);
+		secundario.add(titulo, BorderLayout.NORTH);
+		actual.add(test1);
+		actual.add(test2);
+		secundario.add(actual, BorderLayout.CENTER);
+
+		return secundario;
+	}
+
+	private JPanel btnReinicio(JPanel actual) {
+		JButton temp = new JButton("Reiniciar");
+		temp.setEnabled(false);
+		temp.addActionListener(e -> iniciarBotones());
+
+		actual.add(temp);
+
+		return actual;
+	}
+
+	private JPanel vistaMensaje(JPanel actual) {
+		actual.setLayout(new BoxLayout(panelMensaje, BoxLayout.Y_AXIS));
+		actual.setBorder(new LineBorder(Color.black));
+
+		labelMensaje.setHorizontalAlignment(JLabel.CENTER);
+
+		actual.add(labelMensaje);
+		return actual;
+	}
+
+	private class AccionBtn implements ActionListener {
+		private JPanel siguiente;
+		private JPanel previo;
+
+		public AccionBtn(JPanel previo, JPanel siguiente) {
+			this.previo = previo;
+			this.siguiente = siguiente;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			for (Component previo : previo.getComponents()) {
+				if (previo instanceof JButton) {
+					previo.setEnabled(false);
 				}
 			}
-
-			JButton botonChrome = new JButton("Chrome", iconoRedimensionado(iconoChrome));
-			botonChrome.setEnabled(false);
-			botonChrome.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesBrowsers.add(botonChrome);
-			botonChrome.addActionListener(e -> {
-				preferencias.valorAtributo("navegadorTipo", "1");
-				preferencias.valorAtributo("navegadorNombre", "Chrome");
-				botonChrome.setBackground(colorFondo);
-			});
-			botonChrome.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(false);
-						}
-					}
-					for (JButton btnsEnvironment : botonesAmbientesArray) {
-						if (btnsEnvironment instanceof JButton) {
-							btnsEnvironment.setEnabled(true);
-						}
-					}
+			for (Component siguiente : siguiente.getComponents()) {
+				if (siguiente instanceof JButton) {
+					siguiente.setEnabled(true);
 				}
-			});
-
-			JButton botonFIrefox = new JButton("Firefox", iconoRedimensionado(iconoFirefox));
-			botonFIrefox.setEnabled(false);
-			botonFIrefox.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesBrowsers.add(botonFIrefox);
-			botonFIrefox.addActionListener(e -> {
-				preferencias.valorAtributo("navegadorTipo", "2");
-				preferencias.valorAtributo("navegadorNombre", "Firefox");
-				botonFIrefox.setBackground(colorFondo);
-			});
-			botonFIrefox.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(false);
-						}
-					}
-					for (JButton btnsEnvironment : botonesAmbientesArray) {
-						if (btnsEnvironment instanceof JButton) {
-							btnsEnvironment.setEnabled(true);
-						}
-					}
-				}
-			});
-
-			JButton botonEdge = new JButton("Edge", iconoRedimensionado(iconoEdge));
-			botonEdge.setEnabled(false);
-			botonEdge.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesBrowsers.add(botonEdge);
-			botonEdge.addActionListener(e -> {
-				preferencias.valorAtributo("navegadorTipo", "3");
-				preferencias.valorAtributo("navegadorNombre", "Edge");
-				botonEdge.setBackground(colorFondo);
-			});
-			botonEdge.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(false);
-						}
-					}
-					for (JButton btnsEnvironment : botonesAmbientesArray) {
-						if (btnsEnvironment instanceof JButton) {
-							btnsEnvironment.setEnabled(true);
-						}
-					}
-				}
-			});
-
-			JButton botonSafari = new JButton("Safari", iconoRedimensionado(iconoSafari));
-			botonSafari.setEnabled(false);
-			botonSafari.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesBrowsers.add(botonSafari);
-			botonSafari.addActionListener(e -> {
-				preferencias.valorAtributo("navegadorTipo", "4");
-				preferencias.valorAtributo("navegadorNombre", "Safari");
-				botonSafari.setBackground(colorFondo);
-			});
-			botonSafari.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (Component btnsBrowsers : botonesBrowsers.getComponents()) {
-						if (btnsBrowsers instanceof JButton) {
-							btnsBrowsers.setEnabled(false);
-						}
-					}
-					for (JButton btnsEnvironment : botonesAmbientesArray) {
-						if (btnsEnvironment instanceof JButton) {
-							btnsEnvironment.setEnabled(true);
-						}
-					}
-				}
-			});
-
-			JButton boton1 = new JButton("Login");
-			boton1.setEnabled(false);
-			boton1.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesTests.add(boton1);
-			boton1.addActionListener(e -> {
-				Login.main(args);
-
-			});
-
-			JButton boton2 = new JButton("Transferencias Propias");
-			boton2.setEnabled(false);
-			boton2.setAlignmentX(Component.CENTER_ALIGNMENT);
-			botonesTests.add(boton2);
-			boton2.addActionListener(e -> {
-				Transferencia_propia.main(args);
-
-			});
-
-			JPanel panelMensaje = new JPanel();
-			panelMensaje.setLayout(new BoxLayout(panelMensaje, BoxLayout.Y_AXIS));
-
-			obj.addPropertyChangeListener(evt -> {
-				panelMensaje.setBackground(colorResultado);
-				JLabel label = new JLabel(iconoRedimensionado2(iconoResultado));
-				panelMensaje.setBorder(new LineBorder(Color.black));
-				label.setHorizontalAlignment(JLabel.CENTER);
-				panelMensaje.add(label);
-				panelMensaje.setVisible(mostrarResultado);
-
-				String texto = "";
-
-				for (String elemento : arregloResultado) {
-					texto += elemento + "<br>";
-				}
-
-				label.setText("<html>" + texto + "</html>");
-
-				Border border = BorderFactory.createEmptyBorder(15, 5, 15, 25);
-				label.setBorder(border);
-				new LineBorder(Color.RED, 4);
-
-				label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-				label.setAlignmentY(JLabel.CENTER_ALIGNMENT);
-
-				Dimension size = label.getPreferredSize();
-				label.setPreferredSize(size);
-				label.setFont(new Font("Serif", Font.BOLD, 12));
-				label.setForeground(Color.white);
-				frame.pack();
-
-			});
-
-			c.insets = new Insets(5, 2, 2, 2);
-
-			c.gridx = 0;
-			c.gridy = 0;
-			frame.add(panelNivel, c);
-			c.gridx = 1;
-			frame.add(panelBrowser, c);
-			c.gridx = 2;
-			frame.add(panelAmbientes, c);
-			c.gridx = 3;
-			frame.add(panelTests, c);
-			c.gridy = 1;
-			c.gridwidth = 4;
-			c.gridx = 0;
-			frame.add(panelMensaje, c);
-			frame.getContentPane().setBackground(new Color(199, 238, 255));
-			frame.pack();
-			frame.setVisible(true);
-		});
+			}
+		}
 	}
 
-	private static void selectQA(int valor) throws IOException, InterruptedException, NoSuchFieldException,
-			SecurityException, IllegalArgumentException, IllegalAccessException {
+	@Override
+	public void actualizar(ArrayList<String> nuevoMensaje) {
+
+		if (nuevoMensaje.size() == 0) {
+			labelMensaje.setIcon(iconoRedimensionado(new ImageIcon("src/test/resources/img/Correcto.png"), 36, 36));
+			labelMensaje.setText("Test ejecutado con éxito");
+			panelMensaje.setBackground(Color.green);
+		} else {
+			StringBuilder mensaje = new StringBuilder("<html>");
+			for (String msg : nuevoMensaje) {
+				mensaje.append(msg).append("\n");
+			}
+
+			mensaje.append("</html>");
+
+			labelMensaje.setIcon(iconoRedimensionado(new ImageIcon("src/test/resources/img/Fallo.png"), 36, 36));
+			labelMensaje.setText(mensaje.toString());
+			panelMensaje.setBackground(Color.red);
+		}
+
+		Border border = BorderFactory.createEmptyBorder(15, 5, 15, 25);
+		labelMensaje.setBorder(border);
+		new LineBorder(Color.RED, 4);
+
+		labelMensaje.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		labelMensaje.setAlignmentY(JLabel.CENTER_ALIGNMENT);
+
+		Dimension size = labelMensaje.getPreferredSize();
+		labelMensaje.setPreferredSize(size);
+		labelMensaje.setFont(new Font("Serif", Font.BOLD, 12));
+		labelMensaje.setForeground(Color.white);
+
+		panelMensaje.setVisible(true);
+	}
+
+	private static Icon iconoRedimensionado(ImageIcon icono, int w, int h) {
+		Image imagenRedimensionada = icono.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+		ImageIcon iconoRedimensionado = new ImageIcon(imagenRedimensionada);
+		return iconoRedimensionado;
+	}
+
+	private static void getAmbientes() {
+		ambientes.put(1, "QA01");
+		ambientes.put(2, "QA02");
+		ambientes.put(3, "QA03");
+		ambientes.put(4, "QA04");
+		ambientes.put(5, "QA05");
+		ambientes.put(6, "QA06");
+		ambientes.put(7, "QA07");
+		ambientes.put(8, "QA08");
+		ambientes.put(9, "Produccion");
+	}
+
+	private void setAmbientes(Integer valor) throws InterruptedException {
 
 		String temp = "";
 
-		switch (valor) {
-			case 1:
-				temp = "QA01";
-				break;
-			case 2:
-				temp = "QA02";
-				break;
-			case 3:
-				temp = "QA03";
-				break;
-			case 4:
-				temp = "QA04";
-				break;
-			case 5:
-				temp = "QA05";
-				break;
-			case 6:
-				temp = "QA06";
-				break;
-			case 7:
-				temp = "QA07";
-				break;
-			case 8:
-				temp = "QA08";
-				break;
-			case 9:
-				temp = "Produccion";
-				break;
-			default:
-				temp = "Produccion";
-				break;
+		if (ambientes.containsKey(valor)) {
+			temp = String.valueOf(ambientes.get(valor));
+		} else {
+			temp = "Produccion";
 		}
 
 		preferencias.valorAtributo("paginaWeb", Bi_helper.obtenerDato(temp, "url", AMBIENTE_JSON));
 	}
 
-	private static Icon iconoRedimensionado(ImageIcon icono) {
-		Image imagenRedimensionada = icono.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-		ImageIcon iconoRedimensionado = new ImageIcon(imagenRedimensionada);
-		return iconoRedimensionado;
-	}
-
-	private static Icon iconoRedimensionado2(ImageIcon icono) {
-		Image imagenRedimensionada = icono.getImage().getScaledInstance(36, 36, Image.SCALE_SMOOTH);
-		ImageIcon iconoRedimensionado = new ImageIcon(imagenRedimensionada);
-		return iconoRedimensionado;
-	}
-
-	public static void resultado(ArrayList<String> errores, Boolean ejecutadoExitosamente) {
-		ArrayList<String> old = arregloResultado;
-		mostrarResultado = true;
-		if (ejecutadoExitosamente) {
-			ArrayList<String> arreglo = new ArrayList<>();
-			arreglo.add("Test ejecutado exitosamente");
-			arregloResultado = arreglo;
-			colorResultado = Color.green;
-			iconoResultado = (ImageIcon) iconoRedimensionado2(iconoCorrecto);
-		} else {
-			arregloResultado = errores;
-			colorResultado = Color.red;
-			iconoResultado = (ImageIcon) iconoRedimensionado2(iconoFallo);
+	private void iniciarBotones() {
+		List<JButton> botones = obtenerTodosLosJButtons(this);
+		Color tmp = new JButton().getBackground();
+		for (JButton boton : botones) {
+			boton.setEnabled(false);
+			boton.setBackground(tmp);
 		}
-		escucha.firePropertyChange("arregloResultado", old, errores);
-	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		escucha.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void onListaMensajeChanged(ArrayList<String> nuevaListaMensaje) {
-		for (String mensaje : nuevaListaMensaje) {
-			if (mensaje.equals("Test ejecutado exitosamente") && nuevaListaMensaje.size() == 1) {
-				resultado(nuevaListaMensaje, true);
-			} else
-				resultado(nuevaListaMensaje, false);
+		for (Component panelNivel : panelNivel.getComponents()) {
+			if (panelNivel instanceof JButton) {
+				panelNivel.setEnabled(true);
+			}
 		}
+
+		Mensajes.limpiarMensaje();
+		panelMensaje.setVisible(false);
+	}
+
+	private List<JButton> obtenerTodosLosJButtons(Container container) {
+		List<JButton> botones = new ArrayList<>();
+		buscarJButtons(container, botones);
+		return botones;
+	}
+
+	private void buscarJButtons(Container container, List<JButton> botones) {
+		Component[] componentes = container.getComponents();
+
+		for (Component componente : componentes) {
+			if (componente instanceof JButton) {
+				botones.add((JButton) componente);
+			} else if (componente instanceof Container) {
+				buscarJButtons((Container) componente, botones);
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> {
+			Principal ventana = new Principal();
+			Mensajes.addObserver(ventana);
+		});
 	}
 }

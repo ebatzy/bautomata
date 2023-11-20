@@ -14,7 +14,6 @@ import org.testng.annotations.AfterClass;
 public class Transferencia_propia_test {
 
 	Transferencia_propia_model transferenciaModel = null;
-	Preferencias preferencias = Preferencias.PREFERENCIAS();
 
 	@Test(dataProvider = "Operacion", dataProviderClass = Dtransferencia_propia.class)
 	public void TransferenciaPropiaTest(String cuentaDebitar, String cuentaAcreditar, String monto, int linea)
@@ -24,7 +23,7 @@ public class Transferencia_propia_test {
 
 		ExtentTest test = Reports
 				.createTest("Transferencia Propia de cuenta " + cuentaDebitar + " a " + cuentaAcreditar);
-		Reports.assign(test, "EB", "TEST", preferencias.obtenerAtributo("navegadorNombre"));
+		Reports.assign(test, "EB", "TEST", Preferencias.getInstance().obtenerAtributo("navegadorNombre"));
 
 		transferenciaModel.transferencias(test, cuentaDebitar, cuentaAcreditar, monto, linea);
 	}

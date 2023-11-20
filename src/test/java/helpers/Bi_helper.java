@@ -19,14 +19,9 @@ import javax.json.JsonReader;
 
 import org.openqa.selenium.WebDriver;
 
-import com.aventstack.extentreports.ExtentTest;
-
 import config.Mensajes;
-import config.Preferencias;
-import libraries.Reports;
 
 public class Bi_helper {
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
 	static Mensajes mensajes = Mensajes.MENSAJES();
 
 	public Bi_helper() {

@@ -10,8 +10,7 @@ import config.Preferencias;
 
 public class Reports {
 
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
-	private static String RUTA_REPORTE = preferencias.obtenerAtributo("rutaReporte");
+	private static String RUTA_REPORTE = Preferencias.getInstance().obtenerAtributo("rutaReporte");
 
 	public Reports() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 
@@ -44,13 +43,16 @@ public class Reports {
 
 	public static void logFail(ExtentTest test, String message) {
 		test.log(Status.FAIL, message);
-	//	test.fail(message, MediaEntityBuilder.createScreenCaptureFromPath("Inicio Incorrecto.png").build());
+		// test.fail(message, MediaEntityBuilder.createScreenCaptureFromPath("Inicio
+		// Incorrecto.png").build());
 	}
 
 	public static void logCaptura(ExtentTest test, String message, String ruta, Boolean testPass) {
-		if(testPass) {
-			test.pass(message, MediaEntityBuilder.createScreenCaptureFromPath(ruta).build()); }
-		else{ test.fail(message, MediaEntityBuilder.createScreenCaptureFromPath(ruta).build()); }
+		if (testPass) {
+			test.pass(message, MediaEntityBuilder.createScreenCaptureFromPath(ruta).build());
+		} else {
+			test.fail(message, MediaEntityBuilder.createScreenCaptureFromPath(ruta).build());
+		}
 	}
 
 	public static void logWarning(ExtentTest test, String message) {
@@ -70,7 +72,8 @@ public class Reports {
 	}
 
 	public static void captura(ExtentTest test) {
-		test.fail("error al iniciar sesión", MediaEntityBuilder.createScreenCaptureFromPath(RUTA_REPORTE+"/Inicio Incorrecto.png").build());
+		test.fail("error al iniciar sesión",
+				MediaEntityBuilder.createScreenCaptureFromPath(RUTA_REPORTE + "/Inicio Incorrecto.png").build());
 	}
 
 	public static void cerrarTest() {

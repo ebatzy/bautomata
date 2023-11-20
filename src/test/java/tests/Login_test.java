@@ -13,10 +13,9 @@ public class Login_test {
 
 	@Test
 	public void LoginTest() {
-		Preferencias preferencias = Preferencias.PREFERENCIAS();
 
 		test = Reports.createTest("Login");
-		Reports.assign(test, "EB", "TEST", preferencias.obtenerAtributo("navegadorNombre"));
+		Reports.assign(test, "EB", "TEST", Preferencias.getInstance().obtenerAtributo("navegadorNombre"));
 		try {
 			Login_model loginModel = new Login_model();
 

@@ -8,10 +8,7 @@ public class Mensajes {
 
     private static ArrayList<String> listaMensaje = new ArrayList<String>();
     private static List<MensajesObserver> observers = new ArrayList<>();
-
-
     public HashMap<Integer, String> errores = new HashMap<>();
-
     private static Mensajes MENSAJES;
 
     public Mensajes() {
@@ -30,11 +27,15 @@ public class Mensajes {
 
     public void agregarMensaje(String mensaje) {
         listaMensaje.add(mensaje);
-        notifyObservers();
+        notifyObservers(listaMensaje);
     }
 
     public String getMensaje() {
         return listaMensaje.toString();
+    }
+
+    public static void limpiarMensaje() {
+        listaMensaje.clear();
     }
 
     public static void addObserver(MensajesObserver observer) {
@@ -45,10 +46,9 @@ public class Mensajes {
         observers.remove(observer);
     }
 
-    private static void notifyObservers() {
+    public static void notifyObservers(ArrayList<String> listaMensaje2) {
         for (MensajesObserver observer : observers) {
-            observer.onListaMensajeChanged(listaMensaje);
+            observer.actualizar(listaMensaje2);
         }
     }
-
 }

@@ -21,10 +21,9 @@ public class Transferencia_propia_model {
 	ReadExcelFile readFile = new ReadExcelFile();
 	WriteExcelFile writeFile = new WriteExcelFile();
 
-	static Preferencias preferencias = Preferencias.PREFERENCIAS();
-	private static String RUTA_EXCEL = preferencias.obtenerAtributo("rutaExcel");
-	private static String RUTA_BITACORA = preferencias.obtenerAtributo("bitacora");
-	private static String DATOS_CONFIG = preferencias.obtenerAtributo("rutaJsonConfig");
+	private String RUTA_EXCEL = Preferencias.getInstance().obtenerAtributo("rutaExcel");
+	private String RUTA_BITACORA = Preferencias.getInstance().obtenerAtributo("bitacora");
+	private String DATOS_CONFIG = Preferencias.getInstance().obtenerAtributo("rutaJsonConfig");
 
 	public Transferencia_propia_model() throws InterruptedException, NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException {
