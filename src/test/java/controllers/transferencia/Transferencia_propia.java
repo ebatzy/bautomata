@@ -27,6 +27,6 @@ public class Transferencia_propia {
 		test.setXmlClasses(classes);
 		testng.setXmlSuites(Arrays.asList(new XmlSuite[] { suite }));
 		testng.run();
-		mensajes.agregarMensaje("Test ejecutado exitosamente");
+		Mensajes.notifyObservers(new ArrayList<>());
 	}
 }

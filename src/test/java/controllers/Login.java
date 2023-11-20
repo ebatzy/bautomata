@@ -26,7 +26,6 @@ public class Login {
 		test.setXmlClasses(classes);
 		testng.setXmlSuites(Arrays.asList(new XmlSuite[] { suite }));
 		testng.run();
-		ArrayList <String> origList = new ArrayList<>();
-		Mensajes.notifyObservers(origList);
+		Mensajes.notifyObservers(new ArrayList<>());
 	}
 }
