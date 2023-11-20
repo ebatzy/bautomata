@@ -92,7 +92,7 @@ public class WriteExcelFile {
 		nextCell.setCellStyle(cellStyle);
 
 		nextCell = row.createCell(4);
-		nextCell.setCellValue(tipoCuentaDebito);
+		nextCell.setCellValue(tipoCuentaDebito + " " + resultString);
 		nextCell.setCellStyle(cellStyle);
 
 		nextCell = row.createCell(5);
@@ -110,7 +110,7 @@ public class WriteExcelFile {
 		nextCell.setCellStyle(cellStyle);
 
 		nextCell = row.createCell(8);
-		nextCell.setCellValue(tipoCuentaCredito);
+		nextCell.setCellValue(tipoCuentaCredito  + " " + resultString2);
 		nextCell.setCellStyle(cellStyle);
 
 		nextCell = row.createCell(9);

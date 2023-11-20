@@ -108,7 +108,7 @@ public class Bi_helper {
 					tipoTransaccion;
 
 			if (tipoTransaccion.equals("Login")) {
-				fileName = documentsPath + "/Login "+ Hoy(2) + ".png";
+				fileName = documentsPath + "/Login " + Hoy(2) + ".png";
 				System.out.println(fileName);
 			} else {
 				if (completada) {
@@ -136,64 +136,17 @@ public class Bi_helper {
 				IOException ex) {
 		}
 		return null;
-		
+
 	}
 
 	public static String obtenerTipoCuenta(String cadena) {
-		String valor = "";
 		if (cadena.length() == 10) {
-			if (cadena.substring(0, 2).equals("00"))
-				valor = "Monetaria $";
-			else
-				valor = "Monetaria Q";
+			return "Monetaria";
+		} else if (cadena.length() == 7) {
+			return "Ahorro";
 		} else {
-			switch (cadena.substring(0, 1)) {
-				case "0":
-					valor = "Ahorro Corriente";
-					break;
-				case "3":
-					if (cadena.substring(0, 3).equals("334"))
-						valor = "Ahorro Seguro Dolar";
-					else if (cadena.substring(0, 2).equals("33"))
-						valor = "Ahorro Dolar";
-					else if (cadena.substring(0, 2).equals("34"))
-						valor = "Ahorro Dolar";
-					else if (cadena.substring(0, 2).equals("35"))
-						valor = "Ahorro Super Cuenta";
-					else if (cadena.substring(0, 2).equals("38"))
-						valor = "Ahorro Cuenta Chica";
-					else
-						valor = "Ahorro";
-					break;
-				case "4":
-					if (cadena.substring(0, 3).equals("411"))
-						valor = "Ahorro Seguro Q";
-					else if (cadena.substring(0, 2).equals("41"))
-						valor = "Ahorro con Sorteo";
-					else if (cadena.substring(0, 3).equals("413"))
-						valor = "Ahorro SOS";
-					else
-						valor = "Ahorro";
-					break;
-				case "5":
-					valor = "Ahorro SOS";
-					break;
-				case "7":
-					valor = "Ahorro 5 Estrellas";
-					break;
-				case "8":
-					valor = "Ahorro 5 Estrellas";
-					break;
-				case "9":
-					valor = "Ahorro 5 Estrellas";
-					break;
-				default:
-					valor = "Ahorro";
-					break;
-			}
-			return valor;
+			return "Desconocida";
 		}
-		return valor;
 	}
 
 	public static void setErrores(Integer codigo, Map<String, String> datos) {
