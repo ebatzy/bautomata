@@ -3,13 +3,19 @@ package config;
 import helpers.Bi_helper;
 import org.testng.SkipException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Preferencias {
 
     private static Preferencias instancia;
-    private Map<String, String> atributos;
+    private static Map<String, String> atributos;
+    private static final String entorno = "production";
 
     private Preferencias() {
         String home = System.getProperty("user.home");
@@ -25,8 +31,8 @@ public class Preferencias {
         atributos.put("rutaJsonConfig", home + "\\Documents\\Automatizacion BEL Web\\Resourses\\Config.json");
         atributos.put("rutaReporte", home + "\\Documents\\Automatizacion BEL Web\\Reporte.html");
         atributos.put("nivelTest", "1");
-        atributos.put("navegadorTipo", "");
-        atributos.put("navegadorNombre", "");
+        atributos.put("navegadorTipo", "1");
+        atributos.put("navegadorNombre", "Chrome");
     }
 
     public static synchronized Preferencias getInstance() {
@@ -58,5 +64,48 @@ public class Preferencias {
     public synchronized void valorAtributo(String nombre, String valor) {
         System.out.println("Asignando valor " + valor + " al atributo " + nombre);
         atributos.put(nombre, valor);
+    }
+
+    /**
+     * <p>Entorno de la aplicación</p>
+     *
+     * <p>Se pueden utilizar las siguientes opciones: </p><br>
+     *
+     * <code>development</code><br>
+     * <code>testing</code><br>
+     * <code>production</code><br>
+     *
+     * @return String entorno
+     */
+    public String obtenerEntorno() {
+        return entorno;
+    }
+
+    public void generarPlantillas() {
+        String rutaDestino = Preferencias.getInstance().obtenerAtributo("home") + "/Documents/Automatizacion BEL Web";
+        File carpeta = new File(rutaDestino + "/Resourses");
+
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+
+            copiarPlantilla(rutaDestino, "Datos.xlsx");
+            copiarPlantilla(rutaDestino, "Operacional.xlsx");
+            copiarPlantilla(rutaDestino + "/Resourses", "ambientes.json");
+            copiarPlantilla(rutaDestino + "/Resourses", "Config.json");
+        } else {
+            System.out.println("Las plantillas ya fueron generadas");
+        }
+    }
+
+    private void copiarPlantilla(String destino, String archivo) {
+        try {
+            File plantilla = new File(destino + File.separator + archivo);
+            Files.copy(Objects.requireNonNull(Preferencias.class.getResourceAsStream("/plantillas/" + archivo)),
+                    plantilla.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Archivo copiado: " + plantilla.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new SkipException("Copia de plantilla no completada: " + archivo);
+        }
     }
 }

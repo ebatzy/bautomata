@@ -1,8 +1,32 @@
 package views;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import config.Mensajes;
+import config.MensajesObserver;
+import config.Preferencias;
+import controllers.Login;
+import controllers.transferencia.Transferencia_propia;
+import helpers.Bi_helper;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -11,23 +35,12 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Container;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-
-import com.formdev.flatlaf.FlatDarculaLaf;
-import config.Mensajes;
-import config.MensajesObserver;
-import config.Preferencias;
-import controllers.Login;
-import controllers.transferencia.Transferencia_propia;
-import helpers.Bi_helper;
 
 public class Principal extends JFrame implements MensajesObserver {
     static Preferencias preferencias = Preferencias.getInstance();
@@ -45,17 +58,19 @@ public class Principal extends JFrame implements MensajesObserver {
     private final Color colorFondo = new Color(158, 218, 255);
 
     public Principal() {
-
+        generarPlantillas();
         try {
             UIManager.setLookAndFeel(new FlatDarculaLaf());
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         setTitle("Automatizaciones Transversales");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
         setSize(900, 700);
+        setIconImage(Objects.requireNonNull(Bi_helper.rutaImg("icono.png")).getImage());
         getAmbientes();
 
         GridBagConstraints c = new GridBagConstraints();
@@ -91,14 +106,14 @@ public class Principal extends JFrame implements MensajesObserver {
         JLabel titulo = new JLabel("Nivel", SwingConstants.CENTER);
         JPanel secundario = new JPanel(new BorderLayout());
 
-        //secundario.setBackground(colorFondo);
+        //secundario.setBackground(Color.decode("#505151"));
         secundario.setPreferredSize(new Dimension(150, 270));
 
         titulo.setPreferredSize(new Dimension(300, 25));
         titulo.setFont(new Font("Arial", Font.BOLD, 15));
 
         Principal.panelNivel.setLayout(new BoxLayout(Principal.panelNivel, BoxLayout.Y_AXIS));
-        //Principal.panelNivel.setBackground(new Color(199, 238, 255));
+        Principal.panelNivel.setBackground(Color.decode("#505151"));
 
         secundario.add(titulo, BorderLayout.NORTH);
         for (int i = 1; i <= 3; i++) {
@@ -124,14 +139,10 @@ public class Principal extends JFrame implements MensajesObserver {
         JLabel titulo = new JLabel("Navegador", SwingConstants.CENTER);
         JPanel secundario = new JPanel(new BorderLayout());
 
-        JButton btnChrome = new JButton("Chrome",
-                iconoRedimensionado(new ImageIcon("src/test/resources/img/Chrome.png"), 25, 25));
-        JButton btnFirefox = new JButton("Firefox",
-                iconoRedimensionado(new ImageIcon("src/test/resources/img/Firefox.png"), 25, 25));
-        JButton btnEdge = new JButton("Edge",
-                iconoRedimensionado(new ImageIcon("src/test/resources/img/Edge.png"), 25, 25));
-        JButton btnSafari = new JButton("Safari",
-                iconoRedimensionado(new ImageIcon("src/test/resources/img/Safari.png"), 25, 25));
+        JButton btnChrome = new JButton("Chrome", iconoRedimensionado(Objects.requireNonNull(Bi_helper.rutaImg("Chrome.png")), 25, 25));
+        JButton btnFirefox = new JButton("Firefox", iconoRedimensionado(Objects.requireNonNull(Bi_helper.rutaImg("Firefox.png")), 25, 25));
+        JButton btnEdge = new JButton("Edge", iconoRedimensionado(Objects.requireNonNull(Bi_helper.rutaImg("Edge.png")), 25, 25));
+        JButton btnSafari = new JButton("Safari", iconoRedimensionado(Objects.requireNonNull(Bi_helper.rutaImg("Safari.png")), 25, 25));
 
         //secundario.setBackground(colorFondo);
         secundario.setPreferredSize(new Dimension(150, 270));
@@ -140,7 +151,7 @@ public class Principal extends JFrame implements MensajesObserver {
         titulo.setFont(new Font("Arial", Font.BOLD, 15));
 
         Principal.panelNavegador.setLayout(new BoxLayout(Principal.panelNavegador, BoxLayout.Y_AXIS));
-        //Principal.panelNavegador.setBackground(new Color(199, 238, 255));
+        Principal.panelNavegador.setBackground(Color.decode("#505151"));
 
         btnChrome.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnChrome.addActionListener(new AccionBtn(Principal.panelNavegador, Principal.panelAmbiente));
@@ -199,7 +210,7 @@ public class Principal extends JFrame implements MensajesObserver {
         titulo.setFont(new Font("Arial", Font.BOLD, 15));
 
         actual.setLayout(new BoxLayout(actual, BoxLayout.Y_AXIS));
-        //actual.setBackground(new Color(199, 238, 255));
+        actual.setBackground(Color.decode("#505151"));
 
         secundario.add(titulo, BorderLayout.NORTH);
 
@@ -232,7 +243,7 @@ public class Principal extends JFrame implements MensajesObserver {
         titulo.setFont(new Font("Arial", Font.BOLD, 15));
 
         actual.setLayout(new BoxLayout(actual, BoxLayout.Y_AXIS));
-        //actual.setBackground(new Color(199, 238, 255));
+        actual.setBackground(Color.decode("#505151"));
 
         JButton test1 = new JButton("Login");
         test1.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -320,9 +331,9 @@ public class Principal extends JFrame implements MensajesObserver {
     public void actualizar(ArrayList<String> nuevoMensaje) {
 
         if (nuevoMensaje.isEmpty()) {
-            labelMensaje.setIcon(iconoRedimensionado(new ImageIcon("src/test/resources/img/Correcto.png"), 36, 36));
+            labelMensaje.setIcon(iconoRedimensionado(Objects.requireNonNull(Bi_helper.rutaImg("Correcto.png")), 36, 36));
             labelMensaje.setText("Test ejecutado con éxito");
-            panelMensaje.setBackground(Color.green);
+            panelMensaje.setBackground(Color.decode("#097703"));
         } else {
             StringBuilder mensaje = new StringBuilder("<html>");
             for (String msg : nuevoMensaje) {
@@ -331,9 +342,9 @@ public class Principal extends JFrame implements MensajesObserver {
 
             mensaje.append("</html>");
 
-            labelMensaje.setIcon(iconoRedimensionado(new ImageIcon("src/test/resources/img/Fallo.png"), 36, 36));
+            labelMensaje.setIcon(iconoRedimensionado(Objects.requireNonNull(Bi_helper.rutaImg("Fallo.png")), 36, 36));
             labelMensaje.setText(mensaje.toString());
-            panelMensaje.setBackground(Color.red);
+            panelMensaje.setBackground(Color.decode("#840c03"));
         }
 
         Border border = BorderFactory.createEmptyBorder(15, 5, 15, 25);
@@ -383,6 +394,7 @@ public class Principal extends JFrame implements MensajesObserver {
         List<JButton> botones = obtenerTodosLosJButtons(this);
         Color tmp = new JButton().getBackground();
         for (JButton boton : botones) {
+            boton.setSelected(false);
             boton.setEnabled(false);
             boton.setBackground(tmp);
         }
@@ -413,6 +425,10 @@ public class Principal extends JFrame implements MensajesObserver {
                 buscarJButtons((Container) componente, botones);
             }
         }
+    }
+
+    private static void generarPlantillas() {
+        Preferencias.getInstance().generarPlantillas();
     }
 
     public static void main(String[] args) {

@@ -1,9 +1,8 @@
 package pages;
 
+import helpers.Bi_helper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
-import helpers.Bi_helper;
 
 public class Login_page extends General_page {
 

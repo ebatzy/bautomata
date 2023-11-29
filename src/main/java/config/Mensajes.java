@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Mensajes {
 
-    private static ArrayList<String> listaMensaje = new ArrayList<String>();
+    private static ArrayList<String> listaMensaje = new ArrayList<>();
     private static List<MensajesObserver> observers = new ArrayList<>();
     public HashMap<Integer, String> errores = new HashMap<>();
     private static Mensajes MENSAJES;

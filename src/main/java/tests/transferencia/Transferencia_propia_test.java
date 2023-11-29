@@ -1,4 +1,4 @@
-package pruebas.transferencia;
+package tests.transferencia;
 
 import com.aventstack.extentreports.ExtentTest;
 import config.Preferencias;

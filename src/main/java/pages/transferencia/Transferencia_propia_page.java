@@ -1,12 +1,11 @@
 package pages.transferencia;
 
-import java.time.Duration;
-
+import helpers.Bi_helper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
-import helpers.Bi_helper;
 import pages.General_page;
+
+import java.time.Duration;
 
 public class Transferencia_propia_page extends General_page {
 

@@ -1,10 +1,9 @@
 package pages;
 
-import java.time.Duration;
-
+import helpers.Bi_helper;
 import org.openqa.selenium.By;
 
-import helpers.Bi_helper;
+import java.time.Duration;
 
 public class Principal_page extends General_page {
     private String DATA_JSON = Bi_helper.rutaJson("principal_elements.json");

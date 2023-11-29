@@ -3,5 +3,6 @@
 .vscode
 .vs
 .classpath
+.idea
 target
 test-output

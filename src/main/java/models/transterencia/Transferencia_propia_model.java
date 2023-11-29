@@ -1,21 +1,22 @@
 package models.transterencia;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-
 import com.aventstack.extentreports.ExtentTest;
-
 import config.Preferencias;
 import helpers.Bi_helper;
 import libraries.ReadExcelFile;
 import libraries.Reports;
 import libraries.WriteExcelFile;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.testng.SkipException;
 import pages.Login_page;
 import pages.Principal_page;
 import pages.transferencia.Transferencia_propia_page;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class Transferencia_propia_model {
 
@@ -29,7 +30,7 @@ public class Transferencia_propia_model {
     private String RUTA_BITACORA = Preferencias.getInstance().obtenerAtributo("bitacora");
     private String DATOS_CONFIG = Preferencias.getInstance().obtenerAtributo("rutaJsonConfig");
 
-    public Transferencia_propia_model() throws InterruptedException, SecurityException,
+    public Transferencia_propia_model() throws SecurityException,
             IllegalArgumentException {
         super();
     }
@@ -71,6 +72,7 @@ public class Transferencia_propia_model {
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
             throw new SkipException(e.getMessage());
             //Reports.logFail(test, "Error en el inicio de sesion");
         }
@@ -229,6 +231,7 @@ public class Transferencia_propia_model {
             writeFile.writeCellValue(RUTA_EXCEL, "TransferenciasPropias", linea, 3, errorTransferencia);
         } catch (Exception e) {
             //e.printStackTrace();
+            System.out.println(e.getMessage());
             Bi_helper.setErrores(6, Map.of("{ruta}", RUTA_EXCEL));
             throw new SkipException(e.getMessage());
         }
@@ -247,14 +250,37 @@ public class Transferencia_propia_model {
     }
 
     public void validarArchivosCerrados() {
+        FileInputStream bitacora = null;
+        FileInputStream datos = null;
+
         try {
-            new FileOutputStream(RUTA_BITACORA);
-            new FileOutputStream(RUTA_EXCEL);
+            bitacora = new FileInputStream(RUTA_BITACORA);
+            datos = new FileInputStream(RUTA_EXCEL);
+
+            Workbook testBitacora = WorkbookFactory.create(bitacora);
+            Workbook testDatos = WorkbookFactory.create(datos);
+
+            testBitacora.close();
+            testDatos.close();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
             Bi_helper.setErrores(6, Map.of("{ruta}", RUTA_EXCEL));
             Bi_helper.setErrores(6, Map.of("{ruta}", RUTA_BITACORA));
             throw new SkipException("Debe cerrar los archivos excel");
+        } finally {
+            try {
+                if (bitacora != null) {
+                    bitacora.close();
+                }
+
+                if (datos != null) {
+                    datos.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
         }
     }
 }

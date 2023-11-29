@@ -1,30 +1,26 @@
 package helpers;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import config.Mensajes;
+import config.Preferencias;
+import org.openqa.selenium.WebDriver;
+import org.testng.SkipException;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-
-import config.Preferencias;
-import org.openqa.selenium.WebDriver;
-import org.testng.SkipException;
-
-import config.Mensajes;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 public class Bi_helper {
     static Mensajes mensajes = Mensajes.MENSAJES();
+    static String entorno = Preferencias.getInstance().obtenerEntorno();
 
     public Bi_helper() {
         // super();
@@ -40,14 +36,46 @@ public class Bi_helper {
      * @return String, Valor del atributo encontrado
      */
     public static String obtenerDato(String objeto, String atributo, String ruta) {
-        File archivo = new File(ruta);
+        String retorno = null;
+        System.out.println(ruta);
 
-        String retorno = "";
+        if (entorno.equals("development") || ruta.toLowerCase().contains("documents")) {
+            File archivo = new File(ruta);
 
-        if (archivo.exists()) {
-            try {
+            if (archivo.exists()) {
+                try {
 
-                JsonReader jsonReader = Json.createReader(new FileReader(archivo));
+                    JsonReader jsonReader = Json.createReader(new FileReader(archivo));
+                    JsonObject jsonObject = jsonReader.readObject();
+                    jsonReader.close();
+
+                    if (jsonObject.containsKey(objeto)) {
+
+                        JsonObject formObjeto = jsonObject.getJsonObject(objeto);
+
+                        if (formObjeto.containsKey(atributo)) {
+                            retorno = formObjeto.getString(atributo);
+                        } else {
+                            throw new SkipException("No existe el atributo " + atributo);
+                        }
+                    } else {
+                        setErrores(2, Map.of("{objeto}", objeto, "{ruta}", ruta));
+                        throw new SkipException(Mensajes.getMensaje().toString());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                setErrores(3, Map.of("{ruta}", ruta));
+                throw new SkipException("El archivo " + ruta + " no existe");
+            }
+        } else {
+            System.out.println(ruta);
+            try (InputStream archivo = Bi_helper.class.getResourceAsStream(ruta)) {
+                assert archivo != null;
+                InputStreamReader reader = new InputStreamReader(archivo);
+                JsonReader jsonReader = Json.createReader(reader);
                 JsonObject jsonObject = jsonReader.readObject();
                 jsonReader.close();
 
@@ -64,13 +92,14 @@ public class Bi_helper {
                     setErrores(2, Map.of("{objeto}", objeto, "{ruta}", ruta));
                     throw new SkipException(Mensajes.getMensaje().toString());
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
+                setErrores(3, Map.of("{ruta}", ruta));
+                throw new SkipException("El archivo " + ruta + " no existe");
             }
-        } else {
-            setErrores(3, Map.of("{ruta}", ruta));
-            throw new SkipException("El archivo " + ruta + " no existe");
         }
+
 
         return retorno;
     }
@@ -171,6 +200,29 @@ public class Bi_helper {
     }
 
     public static String rutaJson(String archivo) {
-        return Preferencias.getInstance().obtenerAtributo("baseUrl") + "/src/test/resources/fls/" + archivo;
+        if (entorno.equals("development")) {
+            return Preferencias.getInstance().obtenerAtributo("baseUrl") + "/src/main/resources/fls/" + archivo;
+        } else if (entorno.equals("production")) {
+            return "/fls/" + archivo;
+        } else {
+            return "";
+        }
+    }
+
+    public static ImageIcon rutaImg(String archivo) {
+        if (entorno.equals("development")) {
+            new ImageIcon(Preferencias.getInstance().obtenerAtributo("baseUrl") + "/src/main/resources/img/" + archivo);
+        } else if (entorno.equals("production")) {
+            try (InputStream temp = Bi_helper.class.getResourceAsStream("/img/" + archivo)) {
+                Image image = ImageIO.read(Objects.requireNonNull(temp));
+                return new ImageIcon(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new SkipException("No existe el archivo");
+            }
+        } else {
+            // nada
+        }
+        return null;
     }
 }

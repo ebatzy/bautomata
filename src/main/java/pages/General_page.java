@@ -1,9 +1,6 @@
 package pages;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-
+import config.Preferencias;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -20,7 +17,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.SkipException;
 
-import config.Preferencias;
+import java.time.Duration;
+import java.util.List;
+import java.util.Objects;
 
 public class General_page {
 

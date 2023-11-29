@@ -1,13 +1,12 @@
 package libraries.data_provider;
 
+import config.Preferencias;
+import libraries.ReadExcelFile;
+import org.testng.annotations.DataProvider;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.testng.annotations.DataProvider;
-
-import config.Preferencias;
-import libraries.ReadExcelFile;
 
 public class Dtransferencia_propia extends ReadExcelFile {
     private String RUTA_EXCEL = Preferencias.getInstance().obtenerAtributo("rutaExcel");

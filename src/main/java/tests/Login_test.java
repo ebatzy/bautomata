@@ -6,7 +6,7 @@ import libraries.Reports;
 import models.Login_model;
 import org.testng.annotations.Test;
 
-public class Login_prueba {
+public class Login_test {
     @Test
     public void LoginTest() {
         System.out.println("Entro");
